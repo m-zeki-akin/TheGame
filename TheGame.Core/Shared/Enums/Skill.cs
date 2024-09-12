@@ -1,4 +1,4 @@
-namespace TheGame.Core.Entities.Enums;
+namespace TheGame.Core.Shared.Enums;
 
 public enum Skill
 {

@@ -1,4 +1,4 @@
-using TheGame.Core.Entities.ValueObjects;
+using TheGame.Core.Shared.ValueObjects;
 
 namespace TheGame.Core.Entities;
 

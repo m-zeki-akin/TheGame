@@ -1,13 +1,12 @@
-namespace TheGame.Core.Entities.Enums;
+namespace TheGame.Core.Shared.Enums;
 
 public enum WeaponType
 {
     Autocannon,
     MissileLauncher,
     TorpedoLauncher,
+    Railgun,
     LaserCannon,
     PlasmaCannon,
-    Railgun,
-    IonCannon,
-    GaussCannon
+    IonCannon
 }

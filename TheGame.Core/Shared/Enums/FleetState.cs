@@ -1,9 +1,10 @@
-namespace TheGame.Core.Entities.Enums;
+namespace TheGame.Core.Shared.Enums;
 
 public enum FleetState
 {
     Anchoring,
     Navigating,
+    SpaceJumping,
     Battling,
     Raiding,
     Deploying,

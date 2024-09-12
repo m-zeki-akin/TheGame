@@ -6,8 +6,12 @@ public class AuxiliaryAddon
     public string Name { get; set; }
     public int Morale { get; set; }
     public int HitPoints { get; set; }
-    public int Armour { get; set; }
-    public int Shield { get; set; }
+    
+    public long ArmourId { get; set; }
+    public Armour Armour { get; set; }
+    public long ShieldId { get; set; }
+    public Shield Shield { get; set; }
+    
     public int DetectionRange { get; set; }
     public int Firepower { get; set; }
     public int RateOfFire { get; set; }

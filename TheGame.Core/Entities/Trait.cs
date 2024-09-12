@@ -11,7 +11,6 @@ public class Trait
     public int Shield { get; set; }
     public int ShieldQuality { get; set; }
     public int DetectionRange { get; set; }
-
     public int Firepower { get; set; }
     public int RateOfFire { get; set; }
     public int Range { get; set; }

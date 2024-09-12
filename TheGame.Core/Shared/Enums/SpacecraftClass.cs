@@ -1,6 +1,6 @@
-namespace TheGame.Core.Entities.Enums;
+namespace TheGame.Core.Shared.Enums;
 
-public enum SpaceshipClass
+public enum SpacecraftClass
 {
     Corvette,
     Destroyer,

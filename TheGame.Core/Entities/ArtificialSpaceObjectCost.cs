@@ -1,9 +1,9 @@
 namespace TheGame.Core.Entities;
 
-public class SpaceObjectCost
+public class ArtificialSpaceObjectCost
 {
-    public long SpaceElementId { get; set; }
-    public SpaceObject SpaceObject { get; set; }
+    public long ArtificialSpaceObjectId { get; set; }
+    public ArtificialSpaceObject ArtificialSpaceObject { get; set; }
 
     public long ResourceId { get; set; }
     public Resource Resource { get; set; }

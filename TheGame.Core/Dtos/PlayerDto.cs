@@ -1,27 +1,32 @@
+
 using TheGame.Core.Entities;
 
-namespace TheGame.Core.Dtos;
-
-public class PlayerDto
+namespace TheGame.Core.Dtos
 {
-    public Guid Id { get; set; }
-    public string Username { get; set; }
-    public string Email { get; set; }
-    public DateTime CreatedAt { get; set; }
-
-    public static PlayerDto ToDto(Player entity)
+    public class PlayerDto
     {
-        if (entity == null)
+        public Guid Id { get; set; }
+        public string Username { get; set; }
+        public string Email { get; set; }
+        public int Type { get; set; }
+        public DateTime CreatedAt { get; set; }
+
+        public static PlayerDto ToDto(Player entity)
         {
-            throw new ArgumentNullException(nameof(entity));
+            if (entity == null)
+            {
+                throw new ArgumentNullException(nameof(entity));
+            }
+
+            return new PlayerDto
+            {
+                Id = entity.Id,
+                Email = entity.Email,
+                Type = (int)entity.Type,
+                Username = entity.Username,
+                CreatedAt = entity.CreatedAt
+            };
         }
-        
-        return new PlayerDto
-        {
-            Id = entity.Id,
-            Email = entity.Email,
-            Username = entity.Username,
-            CreatedAt = entity.CreatedAt
-        };
     }
 }
+

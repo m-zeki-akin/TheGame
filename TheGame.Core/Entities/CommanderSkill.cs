@@ -1,4 +1,4 @@
-using TheGame.Core.Entities.Enums;
+using TheGame.Core.Shared.Enums;
 
 namespace TheGame.Core.Entities;
 

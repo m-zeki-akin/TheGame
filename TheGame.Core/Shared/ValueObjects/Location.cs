@@ -1,6 +1,6 @@
-using TheGame.Core.Entities.Enums;
+using TheGame.Core.Shared.Enums;
 
-namespace TheGame.Core.Entities.ValueObjects;
+namespace TheGame.Core.Shared.ValueObjects;
 
 public class Location
 {

@@ -1,3 +1,5 @@
+using TheGame.Core.Shared.Enums;
+
 namespace TheGame.Core.Entities;
 
 public class Player
@@ -5,6 +7,7 @@ public class Player
     public Guid Id { get; set; }
     public string Username { get; set; }
     public string Email { get; set; }
+    public PlayerType Type { get; set; }
     public DateTime CreatedAt { get; set; }
 
     //public ICollection<Alliance> Alliances { get; set; }
@@ -15,4 +18,5 @@ public class Player
     public ICollection<Resource> Resources { get; set; }
     //public ICollection<Research> Researches { get; set; }
     public ICollection<Commander> Commanders { get; set; }
+    
 }

@@ -1,5 +1,5 @@
-using TheGame.Core.Entities.Enums;
-using TheGame.Core.Entities.ValueObjects;
+using TheGame.Core.Shared.Enums;
+using TheGame.Core.Shared.ValueObjects;
 
 namespace TheGame.Core.Entities;
 
@@ -9,6 +9,9 @@ public class Fleet
     public string Name { get; set; }
 
     public long? CommanderId { get; set; }
+    public int LineOfSight { get; set; }
+    public int DetectionPower { get; set; }
+    public int Morale { get; set; }
     public Commander? Commander { get; set; }
     public Location Location { get; set; }
 

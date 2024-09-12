@@ -4,6 +4,6 @@ namespace TheGame.Core.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public class SpaceStationController : ControllerBase
+public class SpaceholdController : ControllerBase
 {
 }
