@@ -4,5 +4,7 @@ public enum SpacecraftType
 {
     Warship,
     Transport,
-    Probe
+    Colony,
+    Drone,
+    Satellite,
 }

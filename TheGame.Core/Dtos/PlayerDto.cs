@@ -5,7 +5,7 @@ namespace TheGame.Core.Dtos
 {
     public class PlayerDto
     {
-        public Guid Id { get; set; }
+        public long Id { get; set; }
         public string Username { get; set; }
         public string Email { get; set; }
         public int Type { get; set; }
@@ -21,10 +21,10 @@ namespace TheGame.Core.Dtos
             return new PlayerDto
             {
                 Id = entity.Id,
-                Email = entity.Email,
                 Type = (int)entity.Type,
                 Username = entity.Username,
                 CreatedAt = entity.CreatedAt
+                //TODO
             };
         }
     }

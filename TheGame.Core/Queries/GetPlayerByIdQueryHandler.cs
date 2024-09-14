@@ -6,9 +6,9 @@ namespace TheGame.Core.Queries;
 
 public class GetPlayerByIdQueryHandler : IRequestHandler<GetPlayerByIdQuery, PlayerDto?>
 {
-    private readonly QueryDbContext _context;
+    private readonly MainDataContext _context;
 
-    public GetPlayerByIdQueryHandler(QueryDbContext context)
+    public GetPlayerByIdQueryHandler(MainDataContext context)
     {
         _context = context;
     }

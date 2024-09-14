@@ -10,10 +10,13 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
 
-builder.Services.AddDbContext<QueryDbContext>(options =>
+builder.Services.AddDbContext<StaticDataContext>(options =>
+    options.UseNpgsql(builder.Configuration.GetConnectionString("StaticDbConnection")));
+
+builder.Services.AddDbContext<ReadOnlyReplicaContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("QueryDbConnection")));
 
-builder.Services.AddDbContext<CommandDbContext>(options =>
+builder.Services.AddDbContext<MainDataContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("CommandDbConnection")));
 
 builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(Program).Assembly));

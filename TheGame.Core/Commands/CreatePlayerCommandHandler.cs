@@ -4,23 +4,25 @@ using TheGame.Core.Entities;
 
 namespace TheGame.Core.Commands;
 
-public class CreatePlayerCommandHandler : IRequestHandler<CreatePlayerCommand, Guid>
+public class CreatePlayerCommandHandler : IRequestHandler<CreatePlayerCommand, long>
 {
-    private readonly CommandDbContext _context;
+    private readonly MainDataContext _context;
     
-    public CreatePlayerCommandHandler(CommandDbContext context)
+    public CreatePlayerCommandHandler(MainDataContext context)
     {
         _context = context;
     }
 
-    public async Task<Guid> Handle(CreatePlayerCommand request, CancellationToken cancellationToken)
+    public async Task<long> Handle(CreatePlayerCommand request, CancellationToken cancellationToken)
     {
         var player = new Player
         {
-            Id = Guid.NewGuid(),
-            // TODO
+            //TODO
         };
+        
         await _context.Players.AddAsync(player, cancellationToken);
+        await _context.SaveChangesAsync(cancellationToken);
+        
         return player.Id;
     }
 }

@@ -2,6 +2,7 @@ namespace TheGame.Core.Shared.Enums;
 
 public enum SpacecraftClass
 {
+    //Warships
     Corvette,
     Destroyer,
     Frigate,
@@ -10,6 +11,14 @@ public enum SpacecraftClass
     HeavyCruiser,
     Dreadnaught,
     Carrier,
+    //Civil
     Conveyor,
-    Espionage
+    Colony,
+    //Probe
+    Drone,
+    Probe,
+    //Satellite
+    Jammer,
+    Radar,
+    Amplifier,
 }

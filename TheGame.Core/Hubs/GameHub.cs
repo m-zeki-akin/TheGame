@@ -35,7 +35,7 @@ namespace TheGame.Core.Hubs{
             await Clients.Client(connectionId).SendAsync("ReceiveTickUpdate", "Tick message sent at " + DateTime.Now);
         }
 
-        public async Task UpdateResource(Resource resource, int amount)
+        public async Task UpdateResource(ResourceValue resource, int amount)
         {
             await Clients.All.SendAsync("ReceiveResourceUpdate", resource, amount);
         }
