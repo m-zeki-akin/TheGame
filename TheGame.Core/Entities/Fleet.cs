@@ -13,7 +13,9 @@ public class Fleet
     public int DetectionRange { get; set; }
     public int DetectionPower { get; set; }
     public int Morale { get; set; }
+    public int Speed { get; set; }
     public Location Location { get; set; }
+    public Location Destination { get; set; }
     
     public long? CommanderId { get; set; }
     public Commander? Commander { get; set; }    

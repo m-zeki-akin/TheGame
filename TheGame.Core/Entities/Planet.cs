@@ -7,11 +7,9 @@ namespace TheGame.Core.Entities;
 
 public class Planet : StellarObject
 {
-    public int Size { get; set; }
     public PlanetType PlanetType  { get; set; }
-    public int Level  { get; set; } // use terra-forming
+    public bool IsActive { get; set; }
     public int Devastation  { get; set; }
-    public Location Location  { get; set; }
     public Climate Climate  { get; set; }
     public bool IsCapital  { get; set; }
     public StrategicResourceType? StrategicResourceType  { get; set; }

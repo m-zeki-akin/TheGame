@@ -5,8 +5,11 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using TheGame.Core.Data;
 using TheGame.Core.Hubs;
+using TheGame.Core.Services;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddSignalR();
 
 builder.Services.AddControllers();
 
@@ -21,7 +24,8 @@ builder.Services.AddDbContext<MainDataContext>(options =>
 
 builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(Program).Assembly));
 
-builder.Services.AddSignalR();
+builder.Services.AddHostedService<FleetUpdateService>();
+builder.Services.AddHostedService<ResourceUpdateService>();
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
