@@ -3,7 +3,8 @@ namespace TheGame.Core.Shared.Enums;
 public enum SpacecraftType
 {
     Warship,
-    Transport,
+    Supply,
+    Paradrop,
     Colony,
     Drone,
     Satellite,

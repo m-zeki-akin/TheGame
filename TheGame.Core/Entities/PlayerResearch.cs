@@ -7,4 +7,7 @@ public class PlayerResearch
     
     public long ResearchId { get; set; }
     public Research Research { get; set; }
+    
+    public int Value { get; set; }
+    public bool IsCompleted { get; set; }
 }

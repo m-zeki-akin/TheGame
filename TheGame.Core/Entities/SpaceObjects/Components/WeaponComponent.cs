@@ -10,6 +10,7 @@ public class WeaponComponent: Component
     public double RateOfFire { get; set; }
     public int Accuracy { get; set; }
     public int Firepower { get; set; }
+    public int Mass { get; set; }
     public long ProjectileComponentId { get; set; }
     public ProjectileComponent ProjectileComponent { get; set; }
 }

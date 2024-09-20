@@ -2,14 +2,15 @@ namespace TheGame.Core.Shared.Enums;
 
 public enum FleetState
 {
-    Deploying,
-    TakingOff,
+    Deployed,
     Docked,
     Anchored,
     Navigating,
     SpaceJumping,
-    Battling,
+    Fighting,
     Raiding,
+    Loading,
+    Unloading,
     Blockading,
     Observing
 }

@@ -1,24 +1,28 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using TheGame.Core.Data;
 using TheGame.Core.Entities;
+using TheGame.Core.Services.Interface;
 using TheGame.Core.Shared.Enums;
 using TheGame.Core.Shared.ValueObjects;
 
 namespace TheGame.Core.Services;
 
-public class FleetUpdateService
+public class FleetUpdateService : IFleetUpdateService
 {
-    private readonly MainDataContext _dbContext;
+    private readonly IServiceProvider _serviceProvider;
 
-    public FleetUpdateService(MainDataContext dbContext)
+    public FleetUpdateService(IServiceProvider serviceProvider)
     {
-        _dbContext = dbContext;
+        _serviceProvider = serviceProvider;
     }
 
-    public async Task UpdateFleetsAsync(CancellationToken cancellationToken)
+    public async Task UpdateFleets(CancellationToken cancellationToken)
     {
-        var fleets = await _dbContext.Fleets
-            //.Include(f => f.SpacecraftGroups) // Load related entities if necessary
+        using var scope = _serviceProvider.CreateScope();
+        var dbContext = scope.ServiceProvider.GetRequiredService<MainDataContext>();
+
+        var fleets = await dbContext.Fleets
             .ToListAsync(cancellationToken);
 
         foreach (var fleet in fleets)
@@ -35,29 +39,33 @@ public class FleetUpdateService
             }
         }
 
-        await _dbContext.SaveChangesAsync(cancellationToken);
+        await dbContext.SaveChangesAsync(cancellationToken);
     }
 
     private async Task UpdateNavigatingFleetAsync(Fleet fleet, CancellationToken cancellationToken)
     {
+        using var scope = _serviceProvider.CreateScope();
+        var dbContext = scope.ServiceProvider.GetRequiredService<MainDataContext>();
+
         var currentPosition = fleet.Location;
-        var direction = new Vector3D(fleet.Destination.Coordinates.X - currentPosition.Coordinates.X,
-            fleet.Destination.Coordinates.Y - currentPosition.Coordinates.Y,
-            fleet.Destination.Coordinates.Z - currentPosition.Coordinates.Z);
+        var dest = fleet.SubDestination.Destinations.First();
+        var direction = new Vector2D(
+            dest.Coordinates.X - currentPosition.Coordinates.X,
+            dest.Coordinates.Y - currentPosition.Coordinates.Y,
+            dest.Coordinates.Z - currentPosition.Coordinates.Z);
+
         var distance = direction.Magnitude;
 
         if (fleet.Speed < distance)
         {
-            // Move fleet towards the destination
             var travelRatio = fleet.Speed / distance;
-            var newPosition = new Vector3D(
-                currentPosition.Coordinates.X + direction.X * travelRatio,
-                currentPosition.Coordinates.Y + direction.Y * travelRatio,
-                currentPosition.Coordinates.Z + direction.Z * travelRatio);
 
             fleet.Location = new Location
             {
-                Coordinates = new Coordinates(newPosition.X, newPosition.Y, newPosition.Z),
+                Coordinates = new Coordinates(
+                    currentPosition.Coordinates.X + direction.X * travelRatio,
+                    currentPosition.Coordinates.Y + direction.Y * travelRatio, 
+                    currentPosition.Coordinates.Z + direction.Z * travelRatio),
                 Type = currentPosition.Type
             };
         }
@@ -66,15 +74,12 @@ public class FleetUpdateService
             fleet.Location = new Location
             {
                 Coordinates = new Coordinates(
-                    fleet.Destination.Coordinates.X,
-                    fleet.Destination.Coordinates.Y,
-                    fleet.Destination.Coordinates.Z),
-                Type = fleet.Destination.Type
+                    dest.Coordinates.X,
+                    dest.Coordinates.Y,
+                    dest.Coordinates.Z),
+                Type = dest.Type
             };
             fleet.State = FleetState.Docked;
         }
-
-        _dbContext.Update(fleet);
-        await _dbContext.SaveChangesAsync(cancellationToken);
     }
 }

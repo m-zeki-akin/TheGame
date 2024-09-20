@@ -11,8 +11,10 @@ public enum SpacecraftClass
     HeavyCruiser,
     Dreadnaught,
     Carrier,
+    //Support
+    Paradrop,
+    Supply,
     //Civil
-    Conveyor,
     Colony,
     //Probe
     Drone,

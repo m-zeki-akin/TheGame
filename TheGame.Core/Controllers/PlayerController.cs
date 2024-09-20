@@ -26,8 +26,8 @@ public class PlayerController : ControllerBase
         _logger.LogInformation("Creating player {Username}", command.Username);
         var playerId = await _mediator.Send(command);
 
-        var playerCreatedEvent = new PlayerCreatedEvent(playerId, command.Username, command.Email, DateTime.UtcNow);
-        await _mediator.Publish(playerCreatedEvent);
+        //var playerCreatedEvent = new PlayerCreatedEvent(playerId, command.Username, command.Email, DateTime.UtcNow);
+        //await _mediator.Publish(playerCreatedEvent);
 
         return CreatedAtAction(nameof(GetPlayerById), new { id = playerId }, playerId);
     }

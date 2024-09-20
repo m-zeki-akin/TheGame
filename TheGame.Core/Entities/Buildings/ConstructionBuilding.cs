@@ -5,5 +5,6 @@ namespace TheGame.Core.Entities.Buildings;
 public class ConstructionBuilding : Building
 {
     public int WorkRate;
-    public ICollection<PlanetBuildingConstructionItem>? Production { get; set; }
+    public int ProductionSlot;
+    public ICollection<PlanetBuildingConstructionItem> Production { get; set; }
 }

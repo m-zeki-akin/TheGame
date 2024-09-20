@@ -15,7 +15,7 @@ public class StaticDataContext : DbContext
     
     
     public DbSet<Research> Researches { get; set; }
-    public DbSet<ResourceValue> ResourceValues { get; set; }
+    public DbSet<ResourceCost> ResourceCosts { get; set; }
     public DbSet<Skill> Skills { get; set; }
     public DbSet<Trait> Traits { get; set; }
     public DbSet<Faction> Factions { get; set; }
@@ -24,9 +24,9 @@ public class StaticDataContext : DbContext
     public DbSet<BuildingRequirement> BuildingRequirements { get; set; }
     public DbSet<ResourceBuilding> ResourceBuildings { get; set; }
     public DbSet<ResearchBuilding> ResearchBuildings { get; set; }
-    public DbSet<FortificationsBuilding> FortificationsBuildings { get; set; }
-    public DbSet<ShipyardBuilding> ShipyardBuildings { get; set; }
-    public DbSet<StarsmithBuilding> StarsmithBuildings { get; set; }
+    public DbSet<SpaceObjectBuilding> FortificationsBuildings { get; set; }
+    public DbSet<SpaceObjectBuilding> ShipyardBuildings { get; set; }
+    public DbSet<SpaceObjectBuilding> StarsmithBuildings { get; set; }
 
     public DbSet<ArmourComponent> ArmourComponents { get; set; }
     public DbSet<AuxiliaryComponent> AuxiliaryComponents { get; set; }

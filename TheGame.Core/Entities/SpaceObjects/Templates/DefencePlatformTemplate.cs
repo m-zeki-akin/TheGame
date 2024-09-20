@@ -12,7 +12,7 @@ public class DefencePlatformTemplate
     public int PowerCost { get; set; }
     
     public long CostId { get; set; }
-    public ResourceValue ResourceValue { get; set; }
+    public ResourceCost ResourceCost { get; set; }
     public long ArmourComponentId { get; set; }
     public ArmourComponent ArmourComponent { get; set; }
     public int ArmourComponentCount { get; set; }

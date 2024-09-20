@@ -11,10 +11,15 @@ public abstract class Building
     public BuildingClass Class { get; set; }
     public int Level { get; set; }
     public int Limit { get; set; }
+    public int ProductionCost { get; set; }
     public bool IsActive { get; set; }
     
     public long CostId { get; set; }
-    public ResourceValue Cost{ get; set; }
+    public ResourceCost Cost{ get; set; }
+    public long? NextLevelBuildingId { get; set; }
+    public Building? NextLevelBuilding{ get; set; }
+    public long? PreviousLevelBuildingId { get; set; }
+    public Building? PreviousLevelBuilding{ get; set; }
     
     public long BuildingRequirement1Id { get; set; }
     public BuildingRequirement BuildingRequirement1 { get; set; }
@@ -43,5 +48,5 @@ public abstract class Building
     public ResearchRequirement? ResearchRequirement6 { get; set; }
     
     public int? ResourceConsumptionsId { get; set; }
-    public ResourceValue ResourceConsumptionsRate { get; set; }
+    public ResourceCost ResourceConsumptionsRate { get; set; }
 }

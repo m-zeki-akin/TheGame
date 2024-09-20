@@ -2,8 +2,13 @@ using TheGame.Core.Entities.SpaceObjects.Components;
 
 namespace TheGame.Core.Entities.SpaceObjects;
 
-public class Spacehold
+public class Spacehold : SpaceObject
 {
+    public long Level { get; set; }
+    public long? NextLevelSpaceholdId { get; set; }
+    public Spacehold? NextLevelSpacehold{ get; set; }
+    public long? PreviousLevelSpaceholdId { get; set; }
+    public Spacehold? PreviousLevelSpacehold{ get; set; }
     public long SupportComponentId { get; set; }
     public SupportComponent SupportComponent { get; set; }
     

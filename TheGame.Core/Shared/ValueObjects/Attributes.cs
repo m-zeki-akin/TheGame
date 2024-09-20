@@ -11,16 +11,26 @@ public class Attributes
     public int ShieldRegenerationRate { get; set; }
     public int ShieldProjectileResistance { get; set; }
     public int ShieldEnergyResistance { get; set; }
+    public int EnginePowerValue { get; set; }
+    public int EngineJumpPowerValue { get; set; }
+    public int EngineConsumptionRate { get; set; }
+    public int EngineMass { get; set; }
     public int Speed { get; set; }
     public int Acceleration { get; set; }
     public int PowerCost { get; set; }
-    public int PowerValue { get; set; }
+    public int PowerGeneratorValue { get; set; }
+    public int PowerGeneratorMass { get; set; }
     public int Morale { get; set; }
     public int Storage { get; set; }
-    public int Firepower { get; set; }
-    public int RateOfFire { get; set; }
-    public int Range { get; set; }
-    public int Accuracy { get; set; }
+    public int WeaponFirepower { get; set; }
+    public int WeaponRateOfFire { get; set; }
+    public int WeaponRange { get; set; }
+    public int WeaponAccuracy { get; set; }
+    public int WeaponPowerCost { get; set; }
+    public int WeaponMass { get; set; }
+    public int ProjectileDamage { get; set; }
+    public int ProjectileShieldPenetration { get; set; }
+    public int ProjectileArmourPenetration { get; set; }
     public int DetectionRange { get; set; }
     public int DetectionPower { get; set; }
     public int ScreenPower { get; set; }

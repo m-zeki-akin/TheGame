@@ -13,10 +13,10 @@ public class SpaceObject
     public long ProductionCost { get; set; }
     public int HitPoints { get; set; } // ortalama
     public int RepairRate { get; set; }
-    public int PowerCost { get; set; }
+    public int PowerCost { get; set; } // Should be stack with component powercost
     
     public long CostId { get; set; }
-    public ResourceValue Cost { get; set; }
+    public ResourceCost Cost { get; set; }
     
     public long AuxiliaryComponentId { get; set; }
     public AuxiliaryComponent AuxiliaryAddon { get; set; }

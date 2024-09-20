@@ -8,9 +8,13 @@ public class Component
     public long Id { get; set; }
     public string Name { get; set; }
     public long Level { get; set; }
+    public long? NextLevelComponentId { get; set; }
+    public Component? NextLevelComponent{ get; set; }
+    public long? PreviousLevelComponentId { get; set; }
+    public Component? PreviousLevelComponent{ get; set; }
     public Size Size { get; set; }
     public long CostId { get; set; }
-    public ResourceValue Cost { get; set; }
+    public ResourceCost Cost { get; set; }
 
     public long BuildingRequirement1Id { get; set; }
     public BuildingRequirement BuildingRequirement1 { get; set; }

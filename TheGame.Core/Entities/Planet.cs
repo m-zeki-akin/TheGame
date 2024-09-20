@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations;
 using TheGame.Core.Entities.Buildings;
 using TheGame.Core.Entities.SpaceObjects;
 using TheGame.Core.Shared.Enums;
@@ -9,12 +10,15 @@ public class Planet : StellarObject
 {
     public PlanetType PlanetType  { get; set; }
     public bool IsActive { get; set; }
+    public bool IsUnderAttack { get; set; }
     public int Devastation  { get; set; }
     public Climate Climate  { get; set; }
     public bool IsCapital  { get; set; }
     public StrategicResourceType? StrategicResourceType  { get; set; }
-    public int? StrategicResourceLevel  { get; set; }
     public ResourceValue StoredResources  { get; set; }
+    
+    public long? StrategicResourceLevelId  { get; set; }
+    public StrategicResourceLevel? StrategicResourceLevel  { get; set; }
 
     public long? OwnerId  { get; set; }
     public Player? Owner  { get; set; }
@@ -32,6 +36,6 @@ public class Planet : StellarObject
     public int FacilitiesDistrict   { get; set; } // construction facility
     
     public long ConstructionBuildingId  { get; set; }
-    public PlanetBuilding ConstructionBuilding  { get; set; }
+    public ConstructionBuilding ConstructionBuilding  { get; set; }
     public ICollection<PlanetBuilding> Buildings  { get; set; }
 }
