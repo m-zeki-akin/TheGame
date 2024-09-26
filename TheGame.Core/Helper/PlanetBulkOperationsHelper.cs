@@ -1,7 +1,8 @@
 ﻿using EFCore.BulkExtensions;
-using TheGame.Core.Data;
-using TheGame.Core.Entities;
-using TheGame.Core.Entities.Buildings.ProductionQueue;
+using TheGame.Core.Game.Data;
+using TheGame.Core.Game.Entities;
+using TheGame.Core.Game.Entities.Buildings.Buildings;
+using TheGame.Core.Game.Shared.ValueObjects;
 
 namespace TheGame.Core.Helper;
 
@@ -17,14 +18,11 @@ public class PlanetBulkOperationsHelper
     public List<PlanetBuildingSpaceObjectItem> SpaceObjectItemsToRemove { get; } = new();
     public List<PlanetBuildingSpaceObjectItem> SpaceObjectItemsToUpdate { get; } = new();
     public List<ResourceValue> ResourcesToUpdate { get; } = new();
-    
+
     public async Task PerformBulkOperations(MainDataContext dbContext,
         PlanetBulkOperationsHelper helper,
         CancellationToken cancellationToken)
     {
-            await dbContext.BulkUpdateAsync(helper.ResourcesToUpdate, cancellationToken: cancellationToken);
-            helper.ResourcesToUpdate.Clear();
-        
         if (helper.PlanetBuildingsToAdd.Any())
         {
             await dbContext.BulkInsertAsync(helper.PlanetBuildingsToAdd, cancellationToken: cancellationToken);

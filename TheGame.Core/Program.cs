@@ -3,47 +3,57 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using TheGame.Core.Cache;
-using TheGame.Core.Data;
-using TheGame.Core.Entities;
-using TheGame.Core.Entities.Buildings.ProductionQueue;
-using TheGame.Core.Hubs;
-using TheGame.Core.Services;
-using TheGame.Core.Services.Interface;
+using Serilog;
+using TheGame.Core.Game.Cache;
+using TheGame.Core.Game.Data;
+using TheGame.Core.Game.Entities;
+using TheGame.Core.Game.Entities.Buildings.Buildings;
+using TheGame.Core.Game.Events.Validators;
+using TheGame.Core.Game.Events.Validators.Interfaces;
+using TheGame.Core.Game.Hubs;
+using TheGame.Core.Game.Services;
+using TheGame.Core.Game.Services.Interface;
+using TheGame.Core.Game.Shared;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddSignalR();
-
+Log.Logger = new LoggerConfiguration().CreateLogger();
 builder.Services.AddControllers();
-
-builder.Services.AddDbContext<StaticDataContext>(options =>
-    options.UseNpgsql(builder.Configuration.GetConnectionString("StaticDbConnection")));
-
-builder.Services.AddDbContext<ReadOnlyReplicaContext>(options =>
-    options.UseNpgsql(builder.Configuration.GetConnectionString("QueryDbConnection")));
-
-builder.Services.AddDbContext<MainDataContext>(options =>
-    options.UseNpgsql(builder.Configuration.GetConnectionString("CommandDbConnection")));
-
 builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(Program).Assembly));
+builder.Services.AddSignalR();
+builder.Services.AddSingleton<GameRules>()
 
-builder.Services.AddSingleton<GameCache<Planet>>();
-builder.Services.AddSingleton<GameCache<PlanetResearch>>();
-builder.Services.AddSingleton<GameCache<PlanetBuilding>>();
-builder.Services.AddSingleton<GameCache<PlanetBuildingConstructionItem>>();
-builder.Services.AddSingleton<GameCache<PlanetBuildingSpaceObjectItem>>();
+    //Cache
+    .AddSingleton<ICacheService<Planet>, CacheService<Planet>>()
+    .AddSingleton<ICacheService<PlanetResearch>, CacheService<PlanetResearch>>()
+    .AddSingleton<ICacheService<PlanetResearch>, CacheService<PlanetResearch>>()
+    .AddSingleton<ICacheService<PlanetBuildingConstructionItem>, CacheService<PlanetBuildingConstructionItem>>()
+    .AddSingleton<ICacheService<PlanetBuildingSpaceObjectItem>, CacheService<PlanetBuildingSpaceObjectItem>>()
+    .AddSingleton<ICacheService<Fleet>, CacheService<Fleet>>()
 
-builder.Services.AddSingleton<GameCache<Fleet>>();
+    //Data Context
+    .AddDbContext<StaticDataContext>(options =>
+        options.UseNpgsql(builder.Configuration.GetConnectionString("StaticDbConnection")))
+    .AddDbContext<ReadOnlyReplicaContext>(options =>
+        options.UseNpgsql(builder.Configuration.GetConnectionString("QueryDbConnection")))
+    .AddDbContext<MainDataContext>(options =>
+        options.UseNpgsql(builder.Configuration.GetConnectionString("CommandDbConnection")))
 
-builder.Services.AddScoped<IPlanetUpdateService, PlanetUpdateService>();
-builder.Services.AddScoped<IFleetUpdateService, FleetUpdateService>();
+    //Validators
+    .AddTransient<IFleetObjectiveCalculatedEventValidator, FleetObjectiveCalculatedEventValidator>()
 
-builder.Services.AddHostedService<GameUpdateService>();
-builder.Services.AddHostedService<SnapshotService>();
+    //Services
+    .AddScoped<IPlanetUpdateService, PlanetUpdateService>()
+    .AddScoped<IFleetUpdateService, FleetUpdateService>()
+    .AddScoped<IFleetObjectiveCalculationService, FleetObjectiveCalculationService>()
 
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+    //Background Services
+    .AddScoped<SnapshotService>()
+    .AddHostedService(sp => sp.GetRequiredService<SnapshotService>())
+    .AddScoped<GameUpdateService>()
+    .AddHostedService(sp => sp.GetRequiredService<GameUpdateService>())
+    .AddEndpointsApiExplorer()
+    .AddSwaggerGen();
 
 var app = builder.Build();
 
@@ -63,7 +73,7 @@ else
 app.UseHttpsRedirection();
 app.UseRouting();
 
-app.MapHub<GameHub>("/gameHub");
+app.MapHub<GameHub>("/Hub");
 
 app.UseAuthorization();
 
