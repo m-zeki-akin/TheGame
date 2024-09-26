@@ -4,6 +4,7 @@ using TheGame.Core.Game.Cache;
 using TheGame.Core.Game.Entities;
 using TheGame.Core.Game.Entities.SpaceObjects;
 using TheGame.Core.Game.Events.Validators;
+using TheGame.Core.Game.Events.Validators.Interfaces;
 using TheGame.Core.Game.Services.Interface;
 using TheGame.Core.Game.Shared.Enums;
 using TheGame.Core.Game.Shared.ValueObjects;
@@ -14,7 +15,7 @@ namespace TheGame.Core.Game.Commands.Handlers;
 public class FleetObjectiveSetCommandHandler(
     ICacheService<Fleet> fleetCache,
     IFleetObjectiveCalculationService fleetObjectiveCalculationService,
-    FleetObjectiveCalculatedEventValidator validator)
+    IFleetObjectiveCalculatedEventValidator validator)
     : IRequestHandler<FleetObjectiveSetCommand, Result<FleetObjective>>
 {
     public Task<Result<FleetObjective>> Handle(FleetObjectiveSetCommand notification,
@@ -33,7 +34,7 @@ public class FleetObjectiveSetCommandHandler(
 
         var totalCost = fleetObjectiveCalculationService.CalculateTotalCost(calculationResults);
         var duration = calculationResults.Min(x => x.TravelTime);
-        
+
 
         var validation = validator.Validate(notification, fleet, totalCost, calculationResults);
         if (validation.IsFailed) return Task.FromResult(Result<FleetObjective>.Failure(validation));

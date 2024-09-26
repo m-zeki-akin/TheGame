@@ -8,17 +8,14 @@ public class GameUpdateService : BackgroundService
 {
     private readonly IFleetUpdateService _fleetUpdateService;
     private readonly IPlanetUpdateService _planetUpdateService;
-    private readonly CancellationTokenSource _shutdownTokenSource;
     private readonly TimeSpan _updateInterval = TimeSpan.FromSeconds(1);
 
     public GameUpdateService(
         IPlanetUpdateService planetUpdateService,
-        IFleetUpdateService fleetUpdateService,
-        CancellationTokenSource shutdownTokenSource)
+        IFleetUpdateService fleetUpdateService)
     {
         _planetUpdateService = planetUpdateService;
         _fleetUpdateService = fleetUpdateService;
-        _shutdownTokenSource = shutdownTokenSource;
     }
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
@@ -32,8 +29,4 @@ public class GameUpdateService : BackgroundService
         }
     }
 
-    public async Task CancelAsync()
-    {
-        await _shutdownTokenSource.CancelAsync();
-    }
 }

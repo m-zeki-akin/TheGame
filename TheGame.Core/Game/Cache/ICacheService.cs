@@ -1,4 +1,6 @@
-﻿namespace TheGame.Core.Game.Cache;
+﻿using TheGame.Core.Game.Data;
+
+namespace TheGame.Core.Game.Cache;
 
 public interface ICacheService<T>
 {
@@ -6,4 +8,9 @@ public interface ICacheService<T>
     Task<T>? Get(long key);
     Task<IEnumerable<T>> GetAll();
     Task Remove(long key);
+}
+
+public interface ICacheService
+{
+    Task SaveSnapshotAsync(MainDataContext dbContext);
 }

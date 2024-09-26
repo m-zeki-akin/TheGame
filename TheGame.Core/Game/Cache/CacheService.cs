@@ -1,8 +1,10 @@
 ﻿using System.Collections.Concurrent;
+using EFCore.BulkExtensions;
+using TheGame.Core.Game.Data;
 
 namespace TheGame.Core.Game.Cache;
 
-public class CacheService<T> : ICacheService<T>
+public class CacheService<T> : ICacheService<T>, ICacheService where T : class
 {
     private readonly ConcurrentDictionary<long, CacheItem<T>> _cache = new();
 
@@ -50,7 +52,16 @@ public class CacheService<T> : ICacheService<T>
 
     public Task<IEnumerable<T>> GetAll()
     {
-        return Task.FromResult<IEnumerable<T>>(_cache.Values.Select(cacheItem => cacheItem.Value).ToList());
+        return Task.FromResult(_cache.Values.Select(cacheItem => cacheItem.Value));
+    }
+    
+    async Task ICacheService.SaveSnapshotAsync(MainDataContext dbContext)
+    {
+        var items = _cache.Values.Select(c => c.Value).ToHashSet();
+        if (items.Any())
+        {
+            await dbContext.BulkInsertAsync(items);
+        }
     }
 
     private void EnqueueTask(CacheItem<T> cacheItem, TaskCompletionSource<T> taskCompletionSource, Action action)

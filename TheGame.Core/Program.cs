@@ -16,44 +16,45 @@ using TheGame.Core.Game.Services.Interface;
 using TheGame.Core.Game.Shared;
 
 var builder = WebApplication.CreateBuilder(args);
-
+var sc = builder.Services;
 Log.Logger = new LoggerConfiguration().CreateLogger();
-builder.Services.AddControllers();
-builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(Program).Assembly));
-builder.Services.AddSignalR();
-builder.Services.AddSingleton<GameRules>()
 
-    //Cache
-    .AddSingleton<ICacheService<Planet>, CacheService<Planet>>()
-    .AddSingleton<ICacheService<PlanetResearch>, CacheService<PlanetResearch>>()
-    .AddSingleton<ICacheService<PlanetResearch>, CacheService<PlanetResearch>>()
-    .AddSingleton<ICacheService<PlanetBuildingConstructionItem>, CacheService<PlanetBuildingConstructionItem>>()
-    .AddSingleton<ICacheService<PlanetBuildingSpaceObjectItem>, CacheService<PlanetBuildingSpaceObjectItem>>()
-    .AddSingleton<ICacheService<Fleet>, CacheService<Fleet>>()
+sc.AddControllers();
+sc.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(Program).Assembly));
+sc.AddSignalR();
+sc.AddSingleton<GameRules>();
 
-    //Data Context
-    .AddDbContext<StaticDataContext>(options =>
-        options.UseNpgsql(builder.Configuration.GetConnectionString("StaticDbConnection")))
-    .AddDbContext<ReadOnlyReplicaContext>(options =>
-        options.UseNpgsql(builder.Configuration.GetConnectionString("QueryDbConnection")))
-    .AddDbContext<MainDataContext>(options =>
-        options.UseNpgsql(builder.Configuration.GetConnectionString("CommandDbConnection")))
+//Cache
+sc.AddSingleton<ICacheService<Planet>, CacheService<Planet>>();
+sc.AddSingleton<ICacheService<PlanetBuilding>, CacheService<PlanetBuilding>>();
+sc.AddSingleton<ICacheService<PlanetResearch>, CacheService<PlanetResearch>>();
+sc.AddSingleton<ICacheService<PlanetBuildingConstructionItem>, CacheService<PlanetBuildingConstructionItem>>();
+sc.AddSingleton<ICacheService<PlanetBuildingSpaceObjectItem>, CacheService<PlanetBuildingSpaceObjectItem>>();
+sc.AddSingleton<ICacheService<Fleet>, CacheService<Fleet>>();
 
-    //Validators
-    .AddTransient<IFleetObjectiveCalculatedEventValidator, FleetObjectiveCalculatedEventValidator>()
+//Data Context
+sc.AddDbContext<StaticDataContext>(options =>
+    options.UseNpgsql(builder.Configuration.GetConnectionString("StaticDbConnection")));
+sc.AddDbContext<ReadOnlyReplicaContext>(options =>
+    options.UseNpgsql(builder.Configuration.GetConnectionString("QueryDbConnection")));
+sc.AddDbContext<MainDataContext>(options =>
+    options.UseNpgsql(builder.Configuration.GetConnectionString("CommandDbConnection")));
 
-    //Services
-    .AddScoped<IPlanetUpdateService, PlanetUpdateService>()
-    .AddScoped<IFleetUpdateService, FleetUpdateService>()
-    .AddScoped<IFleetObjectiveCalculationService, FleetObjectiveCalculationService>()
+//Validators
+sc.AddTransient<IFleetObjectiveCalculatedEventValidator, FleetObjectiveCalculatedEventValidator>();
 
-    //Background Services
-    .AddScoped<SnapshotService>()
-    .AddHostedService(sp => sp.GetRequiredService<SnapshotService>())
-    .AddScoped<GameUpdateService>()
-    .AddHostedService(sp => sp.GetRequiredService<GameUpdateService>())
-    .AddEndpointsApiExplorer()
-    .AddSwaggerGen();
+//Services
+sc.AddScoped<IPlanetUpdateService, PlanetUpdateService>();
+sc.AddScoped<IFleetUpdateService, FleetUpdateService>();
+sc.AddScoped<IFleetObjectiveCalculationService, FleetObjectiveCalculationService>();
+
+//Background Services
+sc.AddScoped<SnapshotService>();
+sc.AddHostedService(sp => sp.GetRequiredService<SnapshotService>());
+sc.AddScoped<GameUpdateService>();
+sc.AddHostedService(sp => sp.GetRequiredService<GameUpdateService>());
+sc.AddEndpointsApiExplorer();
+sc.AddSwaggerGen();
 
 var app = builder.Build();
 

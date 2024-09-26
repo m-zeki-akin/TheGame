@@ -1,28 +1,13 @@
-﻿using EFCore.BulkExtensions;
-using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Hosting;
 using Serilog;
 using TheGame.Core.Game.Cache;
 using TheGame.Core.Game.Data;
-using TheGame.Core.Game.Entities;
 
 namespace TheGame.Core.Game.Services;
 
-public class SnapshotService : BackgroundService
+public class SnapshotService(MainDataContext dbContext) : BackgroundService
 {
-    private readonly MainDataContext _dbContext;
-    private readonly ICacheService<Fleet> _fleetCache;
-    private readonly ICacheService<Planet> _planetCache;
-    private readonly CancellationTokenSource _shutdownTokenSource;
-
-    public SnapshotService(ICacheService<Planet> planetCache, ICacheService<Fleet> fleetCache,
-        MainDataContext dbContext)
-    {
-        _planetCache = planetCache;
-        _fleetCache = fleetCache;
-        _dbContext = dbContext;
-        _shutdownTokenSource = new CancellationTokenSource();
-    }
+    private readonly CancellationTokenSource _shutdownTokenSource = new();
 
     protected override async Task ExecuteAsync(CancellationToken cancellationToken)
     {
@@ -57,12 +42,15 @@ public class SnapshotService : BackgroundService
 
     private async Task SaveSnapshotAsync()
     {
-        _ = Task.WhenAll(
-            _dbContext.BulkInsertAsync(_planetCache.GetAll().Result),
-            _dbContext.BulkInsertAsync(_fleetCache.GetAll().Result)
-        );
+        var saveTasks = new HashSet<Task>(CacheServiceRegistry.CacheServices.Count);
+        foreach (var cacheService in CacheServiceRegistry.CacheServices)
+        {
+            saveTasks.Add(cacheService.SaveSnapshotAsync(dbContext));
+        }
 
-        await _dbContext.SaveChangesAsync();
+        await Task.WhenAll(saveTasks);
+
+        await dbContext.SaveChangesAsync(); // Commit changes to the database
     }
 
     public async Task CancelAsync()
