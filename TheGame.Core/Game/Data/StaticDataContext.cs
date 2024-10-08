@@ -21,12 +21,12 @@ public class StaticDataContext : DbContext
     public DbSet<Faction> Factions { get; set; }
     public DbSet<Alliance> Alliances { get; set; }
 
-    public DbSet<BuildingRequirement> BuildingRequirements { get; set; }
+    public DbSet<ConstructionBuilding> ConstructionBuildings { get; set; }
     public DbSet<ResourceBuilding> ResourceBuildings { get; set; }
     public DbSet<ResearchBuilding> ResearchBuildings { get; set; }
-    public DbSet<SpaceObjectBuilding> FortificationsBuildings { get; set; }
-    public DbSet<SpaceObjectBuilding> ShipyardBuildings { get; set; }
-    public DbSet<SpaceObjectBuilding> StarsmithBuildings { get; set; }
+    public DbSet<FactoryBuilding> FortificationsBuildings { get; set; }
+    public DbSet<FactoryBuilding> ShipyardBuildings { get; set; }
+    public DbSet<FactoryBuilding> StarsmithBuildings { get; set; }
 
     public DbSet<ArmourComponent> ArmourComponents { get; set; }
     public DbSet<AuxiliaryComponent> AuxiliaryComponents { get; set; }
@@ -35,7 +35,6 @@ public class StaticDataContext : DbContext
     public DbSet<ProjectileComponent> ProjectileComponents { get; set; }
     public DbSet<ShieldComponent> ShieldComponents { get; set; }
     public DbSet<StorageComponent> StorageComponents { get; set; }
-    public DbSet<SupportComponent> SupportComponents { get; set; }
     public DbSet<WeaponComponent> WeaponComponents { get; set; }
 
     public DbSet<DefencePlatform> DefencePlatforms { get; set; }

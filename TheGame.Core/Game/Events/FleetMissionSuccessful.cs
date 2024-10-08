@@ -2,6 +2,6 @@
 
 public class FleetMissionSuccessful
 {
-    public long FleetId { get; set; }
-    public long MissionId { get; set; }
+    public Guid FleetId { get; set; }
+    public Guid MissionId { get; set; }
 }

@@ -4,6 +4,6 @@ namespace TheGame.Core.Game.Events;
 
 public class FleetUnloadedEvent : INotification
 {
-    public long FleetId { get; set; }
-    public long PlanetId { get; set; }
+    public Guid FleetId { get; set; }
+    public Guid PlanetId { get; set; }
 }

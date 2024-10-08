@@ -6,9 +6,9 @@ using TheGame.Core.Game.Shared.ValueObjects;
 
 namespace TheGame.Core.Game.Services;
 
-public class FleetObjectiveCalculationService(GameRules gameRules) : IFleetObjectiveCalculationService
+public class FleetObjectiveCalculationService : IFleetObjectiveCalculationService
 {
-    public ResourceValue CalculateTotalCost(IEnumerable<CalculationResult> results)
+    public ResourceValue CalculateTotalCost(IEnumerable<ObjectiveCalculationResult> results)
     {
         var totalCost = new ResourceValue();
         foreach (var result in results)
@@ -23,8 +23,8 @@ public class FleetObjectiveCalculationService(GameRules gameRules) : IFleetObjec
         bool differentSolarSystem)
     {
         var distanceCoefficient = differentSolarSystem
-            ? gameRules.OuterSpaceDistanceCoefficient
-            : gameRules.InterSpaceDistanceCoefficient;
+            ? GameRules.OuterSpaceDistanceCoefficient
+            : GameRules.InterSpaceDistanceCoefficient;
 
         var directionVector = new Vector2D(
             (differentSolarSystem
@@ -61,33 +61,33 @@ public class FleetObjectiveCalculationService(GameRules gameRules) : IFleetObjec
                powerUsagePercentage *
                powerUsagePercentage *
                (differentSolarSystem
-                   ? gameRules.FleetOuterSpaceMovementCostCoefficient
-                   : gameRules.FleetInterSpaceMovementCostCoefficient);
+                   ? GameRules.FleetOuterSpaceMovementCostCoefficient
+                   : GameRules.FleetInterSpaceMovementCostCoefficient);
     }
 
     public long CalculatePlanetDepartTime(StellarObject startLocation, int powerRate)
     {
-        return (long)(startLocation.Size * gameRules.FleetPlanetDepartingTimeCoefficient / powerRate);
+        return (long)(startLocation.Size * GameRules.FleetPlanetDepartingTimeCoefficient / powerRate);
     }
 
     public ResourceValue CalculatePlanetDepartConsumption(Spacecraft spacecraft, long planetDepartTime)
     {
         return spacecraft.EngineComponent.ConsumptionRate * planetDepartTime *
-               gameRules.FleetPlanetDepartingFuelConsumptionCoefficient;
+               GameRules.FleetPlanetDepartingFuelConsumptionCoefficient;
     }
 
     public long CalculateTravelTime(long distance, int powerRate, int jumpPower, bool differentSolarSystem)
     {
         return (long)(differentSolarSystem
-            ? distance / powerRate * gameRules.FleetOuterTravelTimeCoefficient
-            : distance / jumpPower * gameRules.FleetInterTravelTimeCoefficient);
+            ? distance / powerRate * GameRules.FleetOuterTravelTimeCoefficient
+            : distance / jumpPower * GameRules.FleetInterTravelTimeCoefficient);
     }
 
     public ResourceValue CalculateTravelConsumption(ResourceValue consumptionRate, long travelTime,
         bool differentSolarSystem)
     {
         return differentSolarSystem
-            ? consumptionRate * travelTime * gameRules.FleetOuterFuelConsumptionCoefficient
-            : consumptionRate * travelTime * gameRules.FleetInterFuelConsumptionCoefficient;
+            ? consumptionRate * travelTime * GameRules.FleetOuterFuelConsumptionCoefficient
+            : consumptionRate * travelTime * GameRules.FleetInterFuelConsumptionCoefficient;
     }
 }

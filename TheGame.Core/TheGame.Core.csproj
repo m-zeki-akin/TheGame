@@ -9,10 +9,14 @@
     </PropertyGroup>
 
     <ItemGroup>
+        <PackageReference Include="DeepCloner" Version="0.10.4" />
         <PackageReference Include="EFCore.BulkExtensions" Version="8.1.1"/>
+        <PackageReference Include="FastCache.Cached" Version="1.8.2" />
+        <PackageReference Include="FastCache.Core" Version="1.4.9" />
         <PackageReference Include="FluentValidation" Version="11.9.2"/>
         <PackageReference Include="MediatR" Version="12.4.1"/>
         <PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.8"/>
+        <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="8.0.0" />
         <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="8.0.4"/>
         <PackageReference Include="Serilog" Version="4.0.1" />
         <PackageReference Include="Swashbuckle.AspNetCore.Swagger" Version="6.7.3"/>

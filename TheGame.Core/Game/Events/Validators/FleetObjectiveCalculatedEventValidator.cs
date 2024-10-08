@@ -9,21 +9,19 @@ namespace TheGame.Core.Game.Events.Validators;
 
 public class FleetObjectiveCalculatedEventValidator : IFleetObjectiveCalculatedEventValidator
 {
-    private readonly GameRules _gameRules;
-
-    public FleetObjectiveCalculatedEventValidator(GameRules gameRules)
-    {
-        _gameRules = gameRules;
-    }
-
-    public ValidationResult Validate(FleetObjectiveSetCommand notification, Fleet fleet, ResourceValue cost,
-        HashSet<CalculationResult> calculationResults)
+    public ValidationResult Validate(Fleet fleet, ResourceValue cost,
+        HashSet<ObjectiveCalculationResult> calculationResults)
     {
         var validationResult = ValidationResult.Create();
 
         foreach (var spacecraftGroup in fleet.SpacecraftGroups)
         {
             var result = calculationResults.FirstOrDefault(r => r.SpacecraftGroupId == spacecraftGroup.Id);
+
+            if (result == null)
+            {
+                throw new KeyNotFoundException($"Spacecraft group {spacecraftGroup.Id} not found");
+            }
 
             if (result.FuelConsumption.Total() > spacecraftGroup.Spacecraft.Attributes.FuelCapacity)
             {
@@ -35,7 +33,7 @@ public class FleetObjectiveCalculatedEventValidator : IFleetObjectiveCalculatedE
                 );
             }
 
-            if (result.DepartTime > _gameRules.FleetPlanetDepartingTimeMax)
+            if (result.DepartTime > GameRules.FleetPlanetDepartingTimeMax)
             {
                 validationResult.AddError(
                     $"Spacecraft: {spacecraftGroup.Spacecraft.Name} planet depart time limit exceeded.",
@@ -44,7 +42,7 @@ public class FleetObjectiveCalculatedEventValidator : IFleetObjectiveCalculatedE
                 );
             }
 
-            if (result.TravelTime > _gameRules.FleetTravelTimeMax)
+            if (result.TravelTime > GameRules.FleetTravelTimeMax)
             {
                 validationResult.AddError(
                     $"Spacecraft: {spacecraftGroup.Spacecraft.Name} travel time limit exceeded.",

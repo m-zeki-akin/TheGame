@@ -7,7 +7,7 @@ namespace TheGame.Core.Game.Commands;
 
 public class FleetObjectiveSetCommand : IRequest<Result<FleetObjective>>
 {
-    public long FleetId { get; set; }
+    public Guid FleetId { get; set; }
     public int PowerUsagePercentage { get; set; }
     public StellarObject Destination { get; set; }
     public StellarObject StartLocation { set; get; }

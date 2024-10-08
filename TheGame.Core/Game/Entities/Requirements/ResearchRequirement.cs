@@ -1,9 +1,12 @@
-﻿namespace TheGame.Core.Game.Entities.Requirements;
+﻿using System.ComponentModel.DataAnnotations.Schema;
+using TheGame.Core.Game.Entities.Abstract;
 
-public class ResearchRequirement
+namespace TheGame.Core.Game.Entities.Requirements;
+
+[NotMapped]
+public class ResearchRequirement : StaticEntity
 {
-    public long Id { get; set; }
-    public long ResearchId { get; set; }
+    public Guid ResearchId { get; set; }
     public int ResearchLevel { get; set; }
     public Research Research { get; set; }
 }

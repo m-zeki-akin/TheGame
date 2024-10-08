@@ -48,14 +48,12 @@ public class GameHub : Hub
     {
         foreach (var connectionId in PlayerResourceTimers.Keys)
         {
-            var player = GetPlayerByConnectionId(connectionId); // Fetch player
+            var player = GetPlayerByConnectionId(connectionId); 
 
-            // Access the first planet associated with the player
-            var planet = player?.Planets.FirstOrDefault()?.Planet; // Navigate from PlayerPlanet to Planet
-
+            var planet = player?.Planets.FirstOrDefault()?.Planet;
             if (planet?.StoredResources != null)
             {
-                var resource = planet.StoredResources; // Access StoredResources from the Planet entity
+                var resource = planet.StoredResources;
                 await UpdateResource(connectionId, resource);
             }
         }
@@ -65,8 +63,8 @@ public class GameHub : Hub
     {
         foreach (var connectionId in PlayerFleetTimers.Keys)
         {
-            var player = GetPlayerByConnectionId(connectionId); // Fetch player
-            var fleets = player?.Fleets.Select(pf => pf.Fleet).ToList(); // Example: Get all fleets
+            var player = GetPlayerByConnectionId(connectionId);
+            var fleets = player?.Fleets.Select(pf => pf.Fleet).ToList(); 
             if (fleets != null)
             {
                 foreach (var fleet in fleets)
@@ -87,10 +85,9 @@ public class GameHub : Hub
         await Clients.Client(connectionId).SendAsync("ReceiveFleetUpdate", fleet);
     }
 
-    // Placeholder method to fetch the player from the connection ID
-    private Player? GetPlayerByConnectionId(string connectionId)
+    private Empire? GetPlayerByConnectionId(string connectionId)
     {
-        // Logic to fetch the player (e.g., from your in-memory cache or database)
-        return null; // Replace with actual implementation
+       
+        return null;
     }
 }

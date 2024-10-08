@@ -2,7 +2,6 @@
 
 public enum BuildingClass
 {
-    Depot,
     Facility,
     Refinery,
     Research,

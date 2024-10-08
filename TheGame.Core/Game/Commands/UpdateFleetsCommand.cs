@@ -6,7 +6,7 @@ namespace TheGame.Core.Game.Commands;
 
 public class UpdateFleetsCommand : IRequest
 {
-    public long FleetId { get; set; }
+    public Guid FleetId { get; set; }
     public FleetState NewState { get; set; }
     public Location NewLocation { get; set; }
 }

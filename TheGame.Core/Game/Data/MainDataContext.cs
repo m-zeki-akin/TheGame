@@ -17,17 +17,16 @@ public class MainDataContext : DbContext
     public DbSet<Planet> Planets { get; set; }
     public DbSet<PlanetResearch> PlanetResearches { get; set; }
     public DbSet<PlanetBuilding> PlanetBuildings { get; set; }
-    public DbSet<Player> Players { get; set; }
-    public DbSet<PlayerAlliance> PlayerAlliances { get; set; }
-    public DbSet<PlayerCommander> PlayerCommanders { get; set; }
-    public DbSet<PlayerFaction> PlayerFactions { get; set; }
-    public DbSet<PlayerFleet> PlayerFleets { get; set; }
-    public DbSet<PlayerPlanet> PlayerPlanets { get; set; }
-    public DbSet<PlayerResearch> PlayerResearches { get; set; }
+    public DbSet<Empire> Players { get; set; }
+    public DbSet<EmpireAlliance> PlayerAlliances { get; set; }
+    public DbSet<EmpireCommander> PlayerCommanders { get; set; }
+    public DbSet<EmpireFaction> PlayerFactions { get; set; }
+    public DbSet<EmpireFleet> PlayerFleets { get; set; }
+    public DbSet<EmpirePlanet> PlayerPlanets { get; set; }
+    public DbSet<EmpireResearch> PlayerResearches { get; set; }
     public DbSet<TradePartner> TradePartners { get; set; }
-    public DbSet<PlanetBuildingConstructionItem> PlanetBuildingConstructionItems { get; set; }
-
-    public DbSet<PlanetBuildingSpaceObjectItem> PlanetBuildingSpaceObjectItems { get; set; }
+    public DbSet<BuildingProductionItem> BuildingProductionItems { get; set; }
+    public DbSet<SpaceObjectProductionItem> SpaceObjectProductionItems { get; set; }
     /*
      protected override void OnModelCreating(ModelBuilder modelBuilder)
      {

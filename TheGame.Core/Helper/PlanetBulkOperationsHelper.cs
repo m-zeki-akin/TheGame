@@ -11,12 +11,12 @@ public class PlanetBulkOperationsHelper
     public List<PlanetBuilding> PlanetBuildingsToAdd { get; } = new();
     public List<PlanetBuilding> PlanetBuildingsToRemove { get; } = new();
     public List<PlanetBuilding> PlanetBuildingsToUpdate { get; } = new();
-    public List<PlanetBuildingConstructionItem> ConstructionItemsToAdd { get; } = new();
-    public List<PlanetBuildingConstructionItem> ConstructionItemsToRemove { get; } = new();
-    public List<PlanetBuildingConstructionItem> ConstructionItemsToUpdate { get; } = new();
-    public List<PlanetBuildingSpaceObjectItem> SpaceObjectItemsToAdd { get; } = new();
-    public List<PlanetBuildingSpaceObjectItem> SpaceObjectItemsToRemove { get; } = new();
-    public List<PlanetBuildingSpaceObjectItem> SpaceObjectItemsToUpdate { get; } = new();
+    public List<BuildingProductionItem> ConstructionItemsToAdd { get; } = new();
+    public List<BuildingProductionItem> ConstructionItemsToRemove { get; } = new();
+    public List<BuildingProductionItem> ConstructionItemsToUpdate { get; } = new();
+    public List<SpaceObjectProductionItem> SpaceObjectItemsToAdd { get; } = new();
+    public List<SpaceObjectProductionItem> SpaceObjectItemsToRemove { get; } = new();
+    public List<SpaceObjectProductionItem> SpaceObjectItemsToUpdate { get; } = new();
     public List<ResourceValue> ResourcesToUpdate { get; } = new();
 
     public async Task PerformBulkOperations(MainDataContext dbContext,

@@ -2,5 +2,5 @@
 
 public interface IPlanetUpdateService
 {
-    Task UpdatePlanets(CancellationToken cancellationToken);
+    Task UpdateAsync(CancellationToken cancellationToken);
 }

@@ -1,9 +1,9 @@
-﻿using TheGame.Core.Game.Shared.ValueObjects;
+﻿using TheGame.Core.Game.Entities.Abstract;
+using TheGame.Core.Game.Shared.ValueObjects;
 
 namespace TheGame.Core.Game.Entities;
 
-public class ResourceCost
+public class ResourceCost : StaticEntity
 {
-    public long Id { get; set; }
     public ResourceValue ResourceValue { get; set; }
 }

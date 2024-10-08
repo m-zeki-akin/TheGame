@@ -4,9 +4,8 @@ public enum BuildingType
 {
     ConstructionFacility,
     FuelWell,
-    MineralDepot,
     MineralMine,
-    ForificationsFacility,
+    FortificationsFacility,
     Foundry,
     PowerPlant,
     Purifier,
@@ -16,5 +15,4 @@ public enum BuildingType
     Shipyard,
     Starsmith,
     StrategicResourceMine,
-    FuelDepot
 }

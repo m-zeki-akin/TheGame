@@ -1,12 +1,10 @@
 ﻿using MediatR;
-using Serilog;
 using TheGame.Core.Game.Cache;
 using TheGame.Core.Game.Entities;
 using TheGame.Core.Game.Entities.SpaceObjects;
-using TheGame.Core.Game.Events.Validators;
 using TheGame.Core.Game.Events.Validators.Interfaces;
 using TheGame.Core.Game.Services.Interface;
-using TheGame.Core.Game.Shared.Enums;
+using TheGame.Core.Game.Shared;
 using TheGame.Core.Game.Shared.ValueObjects;
 using TheGame.Core.Shared;
 
@@ -21,7 +19,12 @@ public class FleetObjectiveSetCommandHandler(
     public Task<Result<FleetObjective>> Handle(FleetObjectiveSetCommand notification,
         CancellationToken cancellationToken)
     {
-        var fleet = fleetCache.Get(notification.FleetId).Result;
+        var fleet = fleetCache.Get(notification.FleetId);
+
+        if (fleet == null)
+        {
+            throw new KeyNotFoundException($"Fleet with id {notification.FleetId} not found");
+        }
 
         var isDifferentSolarSystem = notification.StartLocation.Location.SolarSystem.Id !=
                                      notification.Destination.Location.SolarSystem.Id;
@@ -29,14 +32,13 @@ public class FleetObjectiveSetCommandHandler(
             notification.Destination, isDifferentSolarSystem);
 
         var spacecraftGroups = fleet.SpacecraftGroups.ToHashSet();
-        var calculationResults = CalculateForAllSpacecraftGroups(notification, spacecraftGroups, distance,
+        var individualResults = CalculateForAllSpacecraftGroupsIndividually(notification, spacecraftGroups, distance,
             isDifferentSolarSystem);
+        var results = CalculateForAllSpacecraftGroupsCorrelated(individualResults);
 
-        var totalCost = fleetObjectiveCalculationService.CalculateTotalCost(calculationResults);
-        var duration = calculationResults.Min(x => x.TravelTime);
+        var totalCost = fleetObjectiveCalculationService.CalculateTotalCost(results);
 
-
-        var validation = validator.Validate(notification, fleet, totalCost, calculationResults);
+        var validation = validator.Validate(fleet, totalCost, results);
         if (validation.IsFailed) return Task.FromResult(Result<FleetObjective>.Failure(validation));
 
         var fleetObjective = new FleetObjective
@@ -47,19 +49,62 @@ public class FleetObjectiveSetCommandHandler(
             IsSpaceJumpRequired = isDifferentSolarSystem,
             Distance = distance,
             Cost = totalCost,
-            Duration = duration
+            Duration = results.First().TravelTime
         };
 
         return Task.FromResult(Result<FleetObjective>.Success(fleetObjective));
     }
+    
+    private HashSet<ObjectiveCalculationResult> CalculateForAllSpacecraftGroupsCorrelated(
+        HashSet<ObjectiveCalculationResult> results)
+    {
+        var correlatedResults = new HashSet<ObjectiveCalculationResult>(); 
+        
+        double duration = results.Max(x => x.TravelTime);
+        var departTime = results.Max(x => x.DepartTime);
+        // Recalculate each spacecraft group with slowest spacecraft group
+        foreach (var result in results)
+        {
+            if (result.TravelTime < duration)
+            {
+                var dDuration = result.TravelTime / duration;
+                var (fuelConsumption, _) = result.FuelConsumption -
+                                           (result.FuelConsumptionRate * Math.Sqrt(dDuration) *
+                                            GameRules.FleetFuelConsumptionNormalizerCoefficient);
+                result.DepartTime = departTime;
+                result.TravelTime = (long)duration;
+                correlatedResults.Add(new ObjectiveCalculationResult
+                {
+                    FuelConsumption = fuelConsumption,
+                    DepartTime = departTime,
+                    FuelConsumptionRate = result.FuelConsumptionRate,
+                    SpacecraftGroupId = result.SpacecraftGroupId,
+                    TravelTime = (long)duration
+                });
+            }
+            else
+            {
+                correlatedResults.Add(new ObjectiveCalculationResult
+                {
+                    FuelConsumption = result.FuelConsumption,
+                    DepartTime = result.DepartTime,
+                    FuelConsumptionRate = result.FuelConsumptionRate,
+                    SpacecraftGroupId = result.SpacecraftGroupId,
+                    TravelTime = result.TravelTime
+                });
+            }
+        }
 
-    private HashSet<CalculationResult> CalculateForAllSpacecraftGroups(
+        return correlatedResults;
+    }
+
+    private HashSet<ObjectiveCalculationResult> CalculateForAllSpacecraftGroupsIndividually(
         FleetObjectiveSetCommand notification,
         IEnumerable<SpacecraftGroup> spacecraftGroups,
         long distance,
         bool differentSolarSystem)
     {
-        var results = new HashSet<CalculationResult>();
+        var results = new HashSet<ObjectiveCalculationResult>();
 
         foreach (var group in spacecraftGroups)
         {
@@ -80,10 +125,12 @@ public class FleetObjectiveSetCommandHandler(
             var totalTravelTime = planetDepartTime + travelTime;
             var totalFuelConsumption = planetDepartConsumption + travelConsumption;
 
-            results.Add(new CalculationResult
+
+            results.Add(new ObjectiveCalculationResult
             {
                 TravelTime = totalTravelTime,
                 FuelConsumption = totalFuelConsumption,
+                FuelConsumptionRate = rates.ConsumptionRate,
                 DepartTime = planetDepartTime,
                 SpacecraftGroupId = group.Id
             });

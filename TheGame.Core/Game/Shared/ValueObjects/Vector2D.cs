@@ -1,6 +1,6 @@
 ﻿namespace TheGame.Core.Game.Shared.ValueObjects;
 
-public readonly struct Vector2D(double x, double y)
+public class Vector2D(double x, double y)
 {
     public double X { get; } = x;
     public double Y { get; } = y;

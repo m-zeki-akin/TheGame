@@ -12,7 +12,7 @@ public class FleetArrivedEventHandler(
 {
     public Task Handle(FleetArrivedEvent notification, CancellationToken cancellationToken)
     {
-        var fleet = fleetCache.Get(notification.FleetId).Result;
+        var fleet = fleetCache.Get(notification.FleetId);
 
         var mission = fleet.FleetMission.First();
 

@@ -11,7 +11,7 @@ public class PlanetBuildingGeneratedResourcesEventHandler(
 {
     public Task Handle(PlanetBuildingGeneratedResourcesEvent notification, CancellationToken cancellationToken)
     {
-        var planet = planetCache.Get(notification.PlanetId).Result;
+        var planet = planetCache.Get(notification.PlanetId);
 
         var planetBuilding = (ResourceBuilding)planet.Buildings
             .First(b => b.Id == notification.PlanetBuildingId).Building;

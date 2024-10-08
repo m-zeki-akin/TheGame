@@ -1,158 +1,171 @@
-﻿using MediatR;
+﻿using System.Diagnostics;
+using MediatR;
+using Serilog;
 using TheGame.Core.Game.Cache;
 using TheGame.Core.Game.Entities;
 using TheGame.Core.Game.Entities.Buildings;
 using TheGame.Core.Game.Entities.Buildings.Buildings;
 using TheGame.Core.Game.Events;
 using TheGame.Core.Game.Services.Interface;
-using TheGame.Core.Helper;
+using TheGame.Core.Game.Shared.Enums;
+using TheGame.Core.Game.Shared.ValueObjects;
 
 namespace TheGame.Core.Game.Services;
 
 public class PlanetUpdateService(
     IMediator mediator,
     ICacheService<Planet> planetCache,
-    ICacheService<PlanetResearch> planetResearchCache,
-    ICacheService<PlanetBuilding> planetBuildingsCache,
-    ICacheService<PlanetBuildingConstructionItem> planetBuildingConstructionItemCache,
-    ICacheService<PlanetBuildingSpaceObjectItem> planetBuildingSpaceObjectItemCache)
+    IStaticCacheService<ResourceCost> resourceCostCache
+    )
     : IPlanetUpdateService
 {
-    /*
-private readonly GameCache<Planet> _planetCache;
-private readonly IServiceProvider _serviceProvider;
-private readonly PlanetBulkOperationsHelper _planetBulkOperationsHelper = new();
-
-public PlanetUpdateService(IServiceProvider serviceProvider)
-{
-    _serviceProvider = serviceProvider;
-}
-
-public async Task UpdatePlanetsDb(CancellationToken cancellationToken)
-{
-    using var scope = _serviceProvider.CreateScope();
-    var dbContext = scope.ServiceProvider.GetRequiredService<MainDataContext>();
-
-    const int batchSize = 6000;
-    long lastProcessedPlanetId = 0;
-
-    while (true)
+    public async Task UpdateAsync(CancellationToken ct)
     {
-        var id = lastProcessedPlanetId;
-        var allActivePlanetsBatched = await dbContext.Planets
-            .Where(p => p.IsActive && p.Id > id)
-            .OrderBy(p => p.Id)
-            .Take(batchSize)
-            .ToListAsync(cancellationToken);
+        var planets = planetCache.GetAll().Where(p => p.IsActive);
 
-        if (allActivePlanetsBatched.Count == 0)
-        {
-            break;
-        }
-
-        foreach (var planet in allActivePlanetsBatched)
-        {
-            await AddResourcesFromResourceBuildings(planet);
-            await AddResourcesFromDockedFleet(planet);
-            await ProduceBuilding(planet, _planetBulkOperationsHelper);
-        }
-
-        await _planetBulkOperationsHelper.PerformBulkOperations(dbContext, _planetBulkOperationsHelper,
-            cancellationToken);
-
-        lastProcessedPlanetId = allActivePlanetsBatched.Last().Id;
-    }
-}
-*/
-
-    public async Task UpdatePlanets(CancellationToken cancellationToken)
-    {
-        var planets = planetCache.GetAll().Result;
+        Stopwatch stopwatch = Stopwatch.StartNew();
 
         foreach (var planet in planets)
         {
-            if (planet.IsActive)
-            {
-                AddResourcesFromResourceBuildings(planet);
-                ProduceBuilding(planet);
-            }
+            await Task.WhenAll(
+                Task.Run(async () => await ProcessBuildingsAsync(planet), ct),
+                Task.Run(async () => await ProcessConstructionsAsync(planet), ct)
+            );
+
         }
+
+        stopwatch.Stop();
+        Log.Information("Planet update time: {time}", stopwatch.Elapsed);
+
+        await Task.CompletedTask;
     }
 
-    private void AddResourcesFromResourceBuildings(Planet planet)
+    private async Task ProcessBuildingsAsync(Planet planet)
     {
         var storage = planet.StoredResources;
 
-        foreach (var planetBuilding in planet.Buildings)
+        foreach (var building in planet.Buildings)
         {
-            if (planetBuilding.Building is ResourceBuilding resourceBuilding)
+            if (building.Building.ResourceConsumptionsRate != null) // Process building Resource Consumption
+            {
+                var resourceCost = resourceCostCache.Get(building.Building.ResourceConsumptionsRate!.Id);
+                (storage, var negativeResources) = storage - resourceCost!.ResourceValue;
+                if (negativeResources.Count > 0)
+                {
+                    storage += resourceCost.ResourceValue;
+                    building.IsEnabled = false;
+                }
+            }
+            
+            if (building.Building is ResourceBuilding resourceBuilding) // Process building Resource Generation
             {
                 storage += resourceBuilding.ResourceProductionsRate;
-            }
-        }
-    }
-
-    private void ProduceBuilding(Planet planet)
-    {
-        if (planet.ConstructionBuilding.Production.Any())
-        {
-            for (var i = 0; i < planet.ConstructionBuilding.ProductionSlot; i++)
+            }            
+            
+            if (building.Building is FactoryBuilding factoryBuilding) // Process building Resource Generation
             {
-                var constructionItem = planet.ConstructionBuilding.Production
-                    .FirstOrDefault(c => c.Order == i);
-                if (constructionItem == null)
-                {
-                    break;
-                }
+                var production = factoryBuilding.Productions.FirstOrDefault();
 
-                constructionItem.CurrentProduction += planet.ConstructionBuilding.WorkRate;
-
-                if (constructionItem.CurrentProduction <
-                    constructionItem.PlanetBuilding.Building.ProductionCost)
+                if (production != null)
                 {
-                    planetBuildingConstructionItemCache.Set(constructionItem.Id, constructionItem);
-                }
-                else
-                {
-                    planetBuildingConstructionItemCache.Remove(constructionItem.Id);
-                    foreach (var item in planet.ConstructionBuilding.Production)
+                    production.CurrentProduction += factoryBuilding.WorkRate;
+                    if (production.CurrentProduction >=
+                        production.SpaceObject.ProductionCost)
                     {
-                        if (item.Order > constructionItem.Order)
+                        var @event = new ProductionCompletedEvent
                         {
-                            item.Order--;
-                            planetBuildingConstructionItemCache.Set(item.Id, item);
-                        }
+                            PlanetId = planet.Id,
+                            Production = production.SpaceObject,
+                        };
+                        await mediator.Publish(@event);
                     }
-
-                    planetBuildingsCache.Set(constructionItem.PlanetBuildingId,
-                        constructionItem.PlanetBuilding);
-
-                    var @event = new ConstructionCompletedEvent
-                    {
-                        PlanetId = planet.Id,
-                        BuildingId = constructionItem.PlanetBuilding.BuildingId
-                    };
-                    mediator.Publish(@event);
                 }
             }
         }
+        
+        await Task.CompletedTask;
     }
 
-    private Task DemolishBuilding(
-        PlanetBuilding planetBuilding,
-        PlanetBulkOperationsHelper helper)
+    private async Task ProcessConstructionsAsync(Planet planet)
     {
-        if (planetBuilding.Building.Level > 1)
+        var production = planet.ConstructionBuilding.Productions.FirstOrDefault();
+
+        if (production != null)
         {
-            planetBuilding.BuildingId = (long)planetBuilding.Building.PreviousLevelBuildingId!;
-            planetBuilding.Building = planetBuilding.Building.PreviousLevelBuilding!;
-            helper.PlanetBuildingsToAdd.Add(planetBuilding);
+            production.CurrentProduction += planet.ConstructionBuilding.WorkRate; // TODO add bonuses(research etc...)
+            
+            if (production.CurrentProduction >=
+                production.ProducedBuilding.ProductionCost)
+            {
+                var @event = new ConstructionCompletedEvent
+                {
+                    PlanetId = planet.Id,
+                    ConstructionItemId = production.Id
+                };
+                await mediator.Publish(@event);
+            }
+        }
+        
+        await Task.CompletedTask;
+    }
+
+    private void ProcessBuildingResourceGeneration(PlanetBuilding building, ResourceValue storage)
+    {
+
+    }
+    
+    /*
+    for (var i = 0; i < planet.ConstructionFacility.ProductionSlot; i++)
+    {
+        var constructionItem = planet.ConstructionFacility.Productions
+            .FirstOrDefault(c => c.Order == i);
+        if (constructionItem != null)
+        {
+            if (constructionItem.CurrentProduction >=
+                constructionItem.ConstructingPlanetBuilding.Building.ProductionCost)
+            {
+                var @event = new ConstructionCompletedEvent
+                {
+                    PlanetId = planet.Id,
+                    PlanetId = planet.Id,
+                    AddedBuildingId = constructionItem.ConstructingPlanetBuildingId,
+                    AddedBuilding = constructionItem.ConstructingPlanetBuilding,
+                    ReplacedBuildingId = constructionItem.ReplacingPlanetBuildingId,
+                    ReplacedBuilding = constructionItem.ReplacingPlanetBuilding
+                };
+                //TODO add contructed building to planetBuildings cache. remove replaced building from that cache too.
+                await mediator.Publish(@event);
+
+                planet.ConstructionFacility.Productions.Remove(constructionItem);
+                i--;
+            }
         }
         else
         {
-            helper.PlanetBuildingsToRemove.Add(planetBuilding);
+            break;
+        }
+    }
+
+
+    await Task.CompletedTask;
+}
+*/
+/*
+    private Task DemolishBuilding(PlanetBuilding planetBuilding)
+    {
+        if (planetBuilding.Building.Level > 1)
+        {
+            var toBuilding = buildingCache.Get((long)planetBuilding.Building.PreviousLevelBuildingId!);
+            planetBuilding.BuildingId = toBuilding!.Id;
+            planetBuilding.Building = toBuilding;
+            planetBuildingsCache.Set(planetBuilding.Id, planetBuilding);
+        }
+        else
+        {
+            planetBuildingsCache.Remove(planetBuilding.Id);
         }
 
         return Task.CompletedTask;
     }
+    */ //TODO This is command. use controller
 }

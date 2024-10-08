@@ -2,11 +2,11 @@ namespace TheGame.Core.Game.Entities.SpaceObjects;
 
 public class SpaceholdGroup
 {
-    public long Id { get; set; }
-    public long SpaceholdId { get; set; }
+    public Guid Id { get; set; }
+    public Guid SpaceholdId { get; set; }
     public Spacehold Spacehold { get; set; }
     public int Quantity { get; set; }
 
-    public long PlanetId { get; set; }
+    public Guid PlanetId { get; set; }
     public Planet Planet { get; set; }
 }

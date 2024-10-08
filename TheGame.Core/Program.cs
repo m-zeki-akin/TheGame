@@ -1,15 +1,18 @@
+using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Serilog;
+using TheGame.Core.Game;
 using TheGame.Core.Game.Cache;
 using TheGame.Core.Game.Data;
 using TheGame.Core.Game.Entities;
 using TheGame.Core.Game.Entities.Buildings.Buildings;
 using TheGame.Core.Game.Events.Validators;
 using TheGame.Core.Game.Events.Validators.Interfaces;
+using TheGame.Core.Game.Hosts;
 using TheGame.Core.Game.Hubs;
 using TheGame.Core.Game.Services;
 using TheGame.Core.Game.Services.Interface;
@@ -22,14 +25,13 @@ Log.Logger = new LoggerConfiguration().CreateLogger();
 sc.AddControllers();
 sc.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(Program).Assembly));
 sc.AddSignalR();
-sc.AddSingleton<GameRules>();
 
 //Cache
 sc.AddSingleton<ICacheService<Planet>, CacheService<Planet>>();
 sc.AddSingleton<ICacheService<PlanetBuilding>, CacheService<PlanetBuilding>>();
 sc.AddSingleton<ICacheService<PlanetResearch>, CacheService<PlanetResearch>>();
-sc.AddSingleton<ICacheService<PlanetBuildingConstructionItem>, CacheService<PlanetBuildingConstructionItem>>();
-sc.AddSingleton<ICacheService<PlanetBuildingSpaceObjectItem>, CacheService<PlanetBuildingSpaceObjectItem>>();
+sc.AddSingleton<ICacheService<BuildingProductionItem>, CacheService<BuildingProductionItem>>();
+sc.AddSingleton<ICacheService<SpaceObjectProductionItem>, CacheService<SpaceObjectProductionItem>>();
 sc.AddSingleton<ICacheService<Fleet>, CacheService<Fleet>>();
 
 //Data Context
@@ -44,17 +46,21 @@ sc.AddDbContext<MainDataContext>(options =>
 sc.AddTransient<IFleetObjectiveCalculatedEventValidator, FleetObjectiveCalculatedEventValidator>();
 
 //Services
+sc.AddScoped<ISnapshotService, SnapshotService>();
 sc.AddScoped<IPlanetUpdateService, PlanetUpdateService>();
 sc.AddScoped<IFleetUpdateService, FleetUpdateService>();
+sc.AddScoped<IPlayerUpdateService, PlayerUpdateService>();
 sc.AddScoped<IFleetObjectiveCalculationService, FleetObjectiveCalculationService>();
 
 //Background Services
-sc.AddScoped<SnapshotService>();
-sc.AddHostedService(sp => sp.GetRequiredService<SnapshotService>());
-sc.AddScoped<GameUpdateService>();
-sc.AddHostedService(sp => sp.GetRequiredService<GameUpdateService>());
+sc.AddHostedService<SnapshotServiceHost>();
+sc.AddHostedService<GameUpdateServiceHost>();
+
 sc.AddEndpointsApiExplorer();
 sc.AddSwaggerGen();
+
+//Pipeline Behaviors
+sc.AddTransient(typeof(IPipelineBehavior<,>), typeof(SnapshotBlockingBehavior<,>));
 
 var app = builder.Build();
 

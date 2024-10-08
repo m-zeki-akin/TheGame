@@ -6,103 +6,50 @@ namespace TheGame.Core.Game.Cache;
 
 public class CacheService<T> : ICacheService<T>, ICacheService where T : class
 {
-    private readonly ConcurrentDictionary<long, CacheItem<T>> _cache = new();
+    private readonly ConcurrentDictionary<Guid, T> _cache = new();
 
-    public Task Set(long key, T value)
+    public CacheService()
+    {
+        CacheServiceRegistry.CacheServices.Add(this);
+    }
+
+    public void Set(Guid key, T value)
     {
         if (value == null)
         {
             throw new ArgumentNullException($"Key:{key} Value:{nameof(value)} cannot be null");
         }
 
-        var taskCompletionSource = new TaskCompletionSource<T>();
-
-        var cacheItem = new CacheItem<T>(value);
-
-        EnqueueTask(cacheItem, taskCompletionSource, () => { taskCompletionSource.SetResult(value); });
-
-        return Task.CompletedTask;
+        _cache.AddOrUpdate(key, value, (_, _) => value);
+        
     }
 
-    public async Task<T> Get(long key)
+    public T Get(Guid key)
     {
-        var taskCompletionSource = new TaskCompletionSource<T>();
-
         if (_cache.TryGetValue(key, out var cacheItem))
         {
-            EnqueueTask(cacheItem, taskCompletionSource, () => { taskCompletionSource.SetResult(cacheItem.Value); });
-        }
-        else
-        {
-            taskCompletionSource.SetResult(default!);
+            return cacheItem;
         }
 
-        return await taskCompletionSource.Task;
+        throw new KeyNotFoundException($"{nameof(T)} cached item with ID:\"{key}\" not found");
     }
 
-    public Task Remove(long key)
+    public void Remove(Guid key)
     {
-        if (_cache.TryRemove(key, out var cacheItem))
-        {
-            CancelQueuedTasks(cacheItem);
-        }
-
-        return Task.CompletedTask;
+        _cache.TryRemove(key, out _);
     }
 
-    public Task<IEnumerable<T>> GetAll()
+    public IEnumerable<T> GetAll()
     {
-        return Task.FromResult(_cache.Values.Select(cacheItem => cacheItem.Value));
+        return _cache.Values;
     }
-    
-    async Task ICacheService.SaveSnapshotAsync(MainDataContext dbContext)
+
+    public async Task SaveSnapshotAsync(MainDataContext dbContext)
     {
-        var items = _cache.Values.Select(c => c.Value).ToHashSet();
+        var items = _cache.Values.ToHashSet();
         if (items.Any())
         {
             await dbContext.BulkInsertAsync(items);
-        }
-    }
-
-    private void EnqueueTask(CacheItem<T> cacheItem, TaskCompletionSource<T> taskCompletionSource, Action action)
-    {
-        cacheItem.TaskQueue.Enqueue(taskCompletionSource);
-
-        if (cacheItem.TaskQueue.Count == 1)
-        {
-            cacheItem.LockSlim.EnterWriteLock();
-            try
-            {
-                action();
-            }
-            finally
-            {
-                cacheItem.LockSlim.ExitWriteLock();
-                cacheItem.TaskQueue.Dequeue();
-
-                if (cacheItem.TaskQueue.Count > 0)
-                {
-                    var nextTask = cacheItem.TaskQueue.Peek();
-                    nextTask.SetResult(cacheItem.Value);
-                }
-            }
-        }
-    }
-
-    private void CancelQueuedTasks(CacheItem<T> cacheItem)
-    {
-        cacheItem.LockSlim.EnterWriteLock();
-        try
-        {
-            while (cacheItem.TaskQueue.Count > 0)
-            {
-                var taskToCancel = cacheItem.TaskQueue.Dequeue();
-                taskToCancel.SetResult(default!);
-            }
-        }
-        finally
-        {
-            cacheItem.LockSlim.ExitWriteLock();
         }
     }
 }

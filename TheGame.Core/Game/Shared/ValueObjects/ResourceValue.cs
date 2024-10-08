@@ -1,6 +1,8 @@
-﻿namespace TheGame.Core.Game.Shared.ValueObjects;
+﻿using Serilog;
 
-public record struct ResourceValue
+namespace TheGame.Core.Game.Shared.ValueObjects;
+
+public class ResourceValue
 {
     public long Fuel { get; set; }
     public long Material { get; set; }
@@ -25,18 +27,44 @@ public record struct ResourceValue
         return x;
     }
 
-    public static ResourceValue operator -(ResourceValue x, ResourceValue y)
+    public static (ResourceValue, HashSet<string>) operator -(ResourceValue x, ResourceValue y)
     {
-        x.Energy -= y.Energy;
-        x.Fuel -= y.Fuel;
-        x.Material -= y.Material;
-        x.Alloy -= y.Alloy;
-        x.Polonium -= y.Polonium;
-        x.Technetium -= y.Technetium;
-        x.Actinium -= y.Actinium;
-        x.Plutonium -= y.Plutonium;
+        // List to register resources that become negative
+        var negativeResources = new HashSet<string>();
 
-        return x;
+        x.Energy -= y.Energy;
+        if (x.Energy < 0)
+            negativeResources.Add("Energy");
+
+        x.Fuel -= y.Fuel;
+        if (x.Fuel < 0)
+            negativeResources.Add("Fuel");
+
+        x.Material -= y.Material;
+        if (x.Material < 0)
+            negativeResources.Add("Material");
+
+        x.Alloy -= y.Alloy;
+        if (x.Alloy < 0)
+            negativeResources.Add("Alloy");
+
+        x.Polonium -= y.Polonium;
+        if (x.Polonium < 0)
+            negativeResources.Add("Polonium");
+        
+        x.Technetium -= y.Technetium;
+        if (x.Technetium < 0)
+            negativeResources.Add("Technetium");
+
+        x.Actinium -= y.Actinium;
+        if (x.Actinium < 0)
+            negativeResources.Add("Actinium");
+
+        x.Plutonium -= y.Plutonium;
+        if (x.Plutonium < 0)
+            negativeResources.Add("Plutonium");
+
+        return (x, negativeResources);
     }
 
     public static ResourceValue operator *(ResourceValue x, int y)
@@ -93,16 +121,36 @@ public record struct ResourceValue
 
     public ResourceValue MultiplySpecialResources(double y)
     {
-        Polonium = (long)(Polonium * y);
-        Technetium = (long)(Technetium * y);
-        Actinium = (long)(Actinium * y);
-        Plutonium = (long)(Plutonium * y);
-
-        return this;
+        return new ResourceValue
+        {
+            Fuel = Fuel,
+            Energy = Energy,
+            Material = Material,
+            Alloy = Alloy,
+            Polonium = (long)(Polonium * y),
+            Technetium = (long)(Technetium * y),
+            Actinium = (long)(Actinium * y),
+            Plutonium = (long)(Plutonium * y)
+        };
     }
 
     public long Total()
     {
         return Fuel + Energy + Material + Alloy + Polonium + Technetium + Actinium + Plutonium;
+    }
+    
+    public ResourceValue Sqrt()
+    {
+        return new ResourceValue
+        {
+            Fuel = (long)Math.Sqrt(Fuel),
+            Energy = (long)Math.Sqrt(Energy),
+            Material = (long)Math.Sqrt(Material),
+            Alloy = (long)Math.Sqrt(Alloy),
+            Polonium = (long)Math.Sqrt(Polonium),
+            Technetium = (long)Math.Sqrt(Technetium),
+            Actinium = (long)Math.Sqrt(Actinium),
+            Plutonium = (long)Math.Sqrt(Plutonium)
+        };
     }
 }

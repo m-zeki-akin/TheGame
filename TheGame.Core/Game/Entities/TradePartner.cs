@@ -1,11 +1,14 @@
+using System.ComponentModel.DataAnnotations.Schema;
+
 namespace TheGame.Core.Game.Entities;
 
+[NotMapped]
 public class TradePartner
 {
-    public long Id { get; set; }
-    public string PlayerId { get; set; }
-    public Player Player { get; set; }
+    public Guid Id { get; set; }
+    public Guid PlayerId { get; set; }
+    public Empire Empire { get; set; }
 
-    public string PartnerId { get; set; }
-    public Player Partner { get; set; }
+    public Guid PartnerId { get; set; }
+    public Empire Partner { get; set; }
 }

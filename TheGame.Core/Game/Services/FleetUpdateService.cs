@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using TheGame.Core.Game.Cache;
 using TheGame.Core.Game.Data;
 using TheGame.Core.Game.Entities;
 using TheGame.Core.Game.Services.Interface;
@@ -8,23 +9,14 @@ using TheGame.Core.Game.Shared.ValueObjects;
 
 namespace TheGame.Core.Game.Services;
 
-public class FleetUpdateService : IFleetUpdateService
+public class FleetUpdateService(ICacheService<Fleet> fleetCache) 
+    : IFleetUpdateService
 {
-    private readonly IServiceProvider _serviceProvider;
 
-    public FleetUpdateService(IServiceProvider serviceProvider)
+    public async Task UpdateAsync(CancellationToken cancellationToken)
     {
-        _serviceProvider = serviceProvider;
-    }
-
-    public async Task UpdateFleets(CancellationToken cancellationToken)
-    {
-        using var scope = _serviceProvider.CreateScope();
-        var dbContext = scope.ServiceProvider.GetRequiredService<MainDataContext>();
-
-        var fleets = await dbContext.Fleets
-            .ToListAsync(cancellationToken);
-
+        var fleets = fleetCache.GetAll();
+        
         foreach (var fleet in fleets)
         {
             switch (fleet.State)
@@ -39,42 +31,10 @@ public class FleetUpdateService : IFleetUpdateService
             }
         }
 
-        await dbContext.SaveChangesAsync(cancellationToken);
     }
 
     private async Task UpdateNavigatingFleetAsync(Fleet fleet, CancellationToken cancellationToken)
     {
-        using var scope = _serviceProvider.CreateScope();
-        var dbContext = scope.ServiceProvider.GetRequiredService<MainDataContext>();
-
-        var currentPosition = fleet.Location;
-        var dest = fleet.SubDestination.Destinations.First();
-        var direction = new Vector2D(
-            dest.Coordinates.X - currentPosition.Coordinates.X,
-            dest.Coordinates.Y - currentPosition.Coordinates.Y);
-
-        var distance = direction.Magnitude;
-
-        if (fleet.Speed < distance)
-        {
-            var travelRatio = fleet.Speed / distance;
-
-            fleet.Location = new Location
-            {
-                Coordinates = new Coordinates(
-                    currentPosition.Coordinates.X + direction.X * travelRatio,
-                    currentPosition.Coordinates.Y + direction.Y * travelRatio)
-            };
-        }
-        else
-        {
-            fleet.Location = new Location
-            {
-                Coordinates = new Coordinates(
-                    dest.Coordinates.X,
-                    dest.Coordinates.Y)
-            };
-            fleet.State = FleetState.Docked;
-        }
+        var fleetObjective = fleet.FleetMission.FirstOrDefault();
     }
 }

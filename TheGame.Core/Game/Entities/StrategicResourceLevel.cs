@@ -1,8 +1,9 @@
-﻿namespace TheGame.Core.Game.Entities;
+﻿using TheGame.Core.Game.Entities.Abstract;
 
-public class StrategicResourceLevel
+namespace TheGame.Core.Game.Entities;
+
+public class StrategicResourceLevel : StaticEntity
 {
-    public long Id { get; set; }
     public string Name { get; set; }
     public int Level { get; set; }
     public double Factor { get; set; }

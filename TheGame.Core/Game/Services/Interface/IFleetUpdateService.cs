@@ -2,5 +2,5 @@
 
 public interface IFleetUpdateService
 {
-    Task UpdateFleets(CancellationToken cancellationToken);
+    Task UpdateAsync(CancellationToken cancellationToken);
 }

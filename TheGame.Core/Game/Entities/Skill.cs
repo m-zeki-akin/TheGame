@@ -1,10 +1,10 @@
-﻿using TheGame.Core.Game.Shared.Enums;
+﻿using TheGame.Core.Game.Entities.Abstract;
+using TheGame.Core.Game.Shared.Enums;
 
 namespace TheGame.Core.Game.Entities;
 
-public class Skill
+public class Skill : StaticEntity
 {
-    public long Id { get; set; }
     public string Name { get; set; }
     public SkillType SkillType { get; set; }
 }

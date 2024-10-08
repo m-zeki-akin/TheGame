@@ -4,6 +4,6 @@ namespace TheGame.Core.Game.Events;
 
 public class PlanetBuildingGeneratedResourcesEvent : INotification
 {
-    public long PlanetId { get; set; }
-    public long PlanetBuildingId { get; set; }
+    public Guid PlanetId { get; set; }
+    public Guid PlanetBuildingId { get; set; }
 }

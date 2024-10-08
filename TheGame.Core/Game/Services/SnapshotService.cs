@@ -1,60 +1,43 @@
-﻿using Microsoft.Extensions.Hosting;
+﻿using Force.DeepCloner;
+using Microsoft.Extensions.Hosting;
 using Serilog;
 using TheGame.Core.Game.Cache;
 using TheGame.Core.Game.Data;
 
 namespace TheGame.Core.Game.Services;
 
-public class SnapshotService(MainDataContext dbContext) : BackgroundService
+public class SnapshotService(MainDataContext dbContext) : ISnapshotService
 {
-    private readonly CancellationTokenSource _shutdownTokenSource = new();
-
-    protected override async Task ExecuteAsync(CancellationToken cancellationToken)
+    private static readonly SemaphoreSlim SnapshotLock = new(2, 2);
+    
+    public async Task SaveSnapshotAsync()
     {
-        Log.Information("Starting snapshot service.");
-
-        var cct = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken, _shutdownTokenSource.Token).Token;
-
-        _ = Task.Run(() =>
+        await SnapshotLock.WaitAsync();
+        try
         {
-            while (!cct.IsCancellationRequested)
+            var tasks = new HashSet<Task>(CacheServiceRegistry.CacheServices.Count);
+            foreach (var cacheService in CacheServiceRegistry.CacheServices)
             {
-                _ = Task.WhenAll(
-                    SaveSnapshotAsync(),
-                    Task.Run(() => Log.Information("Executing 10-minute snapshot."), cct),
-                    Task.Delay(TimeSpan.FromMinutes(10), cct)
-                );
+                tasks.Add(Task.Run(() => cacheService.SaveSnapshotAsync(dbContext)));
             }
-        }, cct);
 
-        _ = Task.Run(() =>
-        {
-            while (!cct.IsCancellationRequested)
-            {
-                _ = Task.WhenAll(
-                    SaveSnapshotAsync(),
-                    Task.Run(() => Log.Information("Executing daily snapshot."), cct),
-                    Task.Delay(TimeSpan.FromDays(1), cct)
-                );
-            }
-        }, cct);
-    }
-
-    private async Task SaveSnapshotAsync()
-    {
-        var saveTasks = new HashSet<Task>(CacheServiceRegistry.CacheServices.Count);
-        foreach (var cacheService in CacheServiceRegistry.CacheServices)
-        {
-            saveTasks.Add(cacheService.SaveSnapshotAsync(dbContext));
+            await Task.WhenAll(tasks);
         }
-
-        await Task.WhenAll(saveTasks);
-
-        await dbContext.SaveChangesAsync(); // Commit changes to the database
+        finally
+        {
+            SnapshotLock.Release();
+        }
+        
+        await dbContext.SaveChangesAsync();
     }
-
-    public async Task CancelAsync()
+    
+    public async Task WaitForSnapshotToCompleteAsync()
     {
-        await _shutdownTokenSource.CancelAsync();
+        if (SnapshotLock.CurrentCount > 0)
+        {
+            return;
+        }
+        await SnapshotLock.WaitAsync();
+        SnapshotLock.Release();
     }
 }

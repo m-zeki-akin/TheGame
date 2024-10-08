@@ -7,6 +7,5 @@ namespace TheGame.Core.Game.Events.Validators.Interfaces;
 
 public interface IFleetObjectiveCalculatedEventValidator
 {
-    ValidationResult Validate(FleetObjectiveSetCommand notification, Fleet fleet, ResourceValue cost,
-        HashSet<CalculationResult> calculationResults);
+    ValidationResult Validate(Fleet fleet, ResourceValue cost, HashSet<ObjectiveCalculationResult> calculationResults);
 }

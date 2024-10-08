@@ -11,8 +11,8 @@ public class FleetUnloadedEventHandler(
 {
     public Task Handle(FleetUnloadedEvent notification, CancellationToken cancellationToken)
     {
-        var planet = planetCache.Get(notification.PlanetId).Result;
-        var fleet = fleetCache.Get(notification.FleetId).Result;
+        var planet = planetCache.Get(notification.PlanetId);
+        var fleet = fleetCache.Get(notification.FleetId);
 
         planet.StoredResources += fleet.Stock;
 

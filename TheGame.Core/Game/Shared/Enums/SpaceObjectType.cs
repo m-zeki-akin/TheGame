@@ -4,5 +4,6 @@ public enum SpaceObjectType
 {
     Spacecraft,
     DefencePlatform,
-    Spacehold
+    Spacehold,
+    Component,
 }

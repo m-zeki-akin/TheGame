@@ -2,7 +2,7 @@
 
 public class PowerGeneratorComponent : Component
 {
-    public long Id { get; set; }
+    public Guid Id { get; set; }
     public string Name { get; set; }
     public int Value { get; set; }
     public int Mass { get; set; }

@@ -1,6 +1,6 @@
 ﻿namespace TheGame.Core.Game.Shared.ValueObjects;
 
-public struct Climate
+public class Climate
 {
     public int MaxTemperature { get; set; }
     public int MinTemperature { get; set; }

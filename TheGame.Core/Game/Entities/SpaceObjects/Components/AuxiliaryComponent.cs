@@ -4,5 +4,5 @@ namespace TheGame.Core.Game.Entities.SpaceObjects.Components;
 
 public class AuxiliaryComponent : Component
 {
-    public Attributes Attributes;
+    public SpaceObjectAttributes Attributes;
 }

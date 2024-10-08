@@ -5,6 +5,6 @@ namespace TheGame.Core.Game.Commands;
 
 public class UpdatePlanetResourcesCommand : IRequest
 {
-    public long PlanetId { get; set; }
+    public Guid PlanetId { get; set; }
     public ResourceValue ResourcesToAdd { get; set; }
 }
