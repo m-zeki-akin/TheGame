@@ -1,5 +1,6 @@
 using MediatR;
 using TheGame.Core.Game.Entities;
+using TheGame.Core.Game.Entities.Empires;
 using TheGame.Core.Game.Shared.Enums;
 
 namespace TheGame.Core.Game.Commands;

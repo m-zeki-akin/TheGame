@@ -40,6 +40,7 @@ public class SpaceObjectAttributes
     public int ScreenPower { get; set; }
     public int CommandPower { get; set; }
     public int DefencePower { get; set; }
+    public int BombardmentPower { get; set; }
     public int HitPoints { get; set; }
     public int Mass { get; set; }
     public int ProjectileResistance { get; set; }

@@ -1,7 +1,4 @@
-﻿using TheGame.Core.Game.Entities.Buildings;
-using TheGame.Core.Game.Entities.Requirements;
-
-namespace TheGame.Core.Game.Entities.SpaceObjects;
+﻿namespace TheGame.Core.Game.Entities.Buildings;
 
 public class BuildingRequirement
 {

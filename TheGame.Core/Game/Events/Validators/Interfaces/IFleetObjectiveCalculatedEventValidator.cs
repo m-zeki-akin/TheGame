@@ -1,5 +1,6 @@
 ﻿using TheGame.Core.Game.Commands;
 using TheGame.Core.Game.Entities;
+using TheGame.Core.Game.Entities.Fleets;
 using TheGame.Core.Game.Shared.ValueObjects;
 using TheGame.Core.Shared.Validation;
 

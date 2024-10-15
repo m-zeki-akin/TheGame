@@ -1,6 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using TheGame.Core.Game.Entities;
-using TheGame.Core.Game.Entities.Buildings.Buildings;
+using TheGame.Core.Game.Entities.Empires;
+using TheGame.Core.Game.Entities.Fleets;
+using TheGame.Core.Game.Entities.Productions;
+using TheGame.Core.Game.Entities.StellarObjects;
 
 namespace TheGame.Core.Game.Data;
 
@@ -24,7 +27,7 @@ public class MainDataContext : DbContext
     public DbSet<EmpireFleet> PlayerFleets { get; set; }
     public DbSet<EmpirePlanet> PlayerPlanets { get; set; }
     public DbSet<EmpireResearch> PlayerResearches { get; set; }
-    public DbSet<TradePartner> TradePartners { get; set; }
+    public DbSet<EmpireTrade> TradePartners { get; set; }
     public DbSet<BuildingProductionItem> BuildingProductionItems { get; set; }
     public DbSet<SpaceObjectProductionItem> SpaceObjectProductionItems { get; set; }
     /*

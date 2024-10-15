@@ -10,12 +10,9 @@ public class SpaceObject
     public Guid Id { get; set; }
     public string Name { get; set; }
     public SpaceObjectType Type { get; set; }
-
-    public int PowerCost { get; set; }
-
     public Guid ProductionCostId { get; set; }
     public long ProductionCost { get; set; }
-    public Guid CostId { get; set; }
-    public ResourceCost Cost { get; set; }
-    public SpaceObjectAttributes Attributes { get; set; }
+    public ResourceValue Cost { get; set; }
+    public int HitPoints { get; set; }
+    public int Mass { get; set; }
 }

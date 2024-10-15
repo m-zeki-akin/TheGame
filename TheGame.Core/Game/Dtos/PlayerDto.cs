@@ -1,4 +1,5 @@
 using TheGame.Core.Game.Entities;
+using TheGame.Core.Game.Entities.Empires;
 
 namespace TheGame.Core.Game.Dtos;
 

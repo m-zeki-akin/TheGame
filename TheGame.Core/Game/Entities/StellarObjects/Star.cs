@@ -1,4 +1,4 @@
-namespace TheGame.Core.Game.Entities;
+namespace TheGame.Core.Game.Entities.StellarObjects;
 
 public class Star : StellarObject
 {

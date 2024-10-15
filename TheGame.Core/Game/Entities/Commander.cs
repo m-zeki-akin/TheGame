@@ -1,8 +1,11 @@
+using TheGame.Core.Game.Entities.Empires;
+using TheGame.Core.Game.Entities.Fleets;
+using TheGame.Core.Game.Entities.StellarObjects;
+
 namespace TheGame.Core.Game.Entities;
 
-public class Commander
+public class Commander : DynamicEntity
 {
-    public Guid Id { get; set; }
     public string Name { get; set; }
     public bool IsActive { get; set; }
 

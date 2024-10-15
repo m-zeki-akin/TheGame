@@ -1,5 +1,7 @@
 ﻿using MediatR;
 using TheGame.Core.Game.Entities;
+using TheGame.Core.Game.Entities.Fleets;
+using TheGame.Core.Game.Entities.StellarObjects;
 using TheGame.Core.Game.Shared.Enums;
 using TheGame.Core.Shared;
 

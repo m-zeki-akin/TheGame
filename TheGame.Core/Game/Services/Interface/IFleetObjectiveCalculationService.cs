@@ -1,5 +1,6 @@
 ﻿using TheGame.Core.Game.Entities;
 using TheGame.Core.Game.Entities.SpaceObjects;
+using TheGame.Core.Game.Entities.StellarObjects;
 using TheGame.Core.Game.Shared.ValueObjects;
 
 namespace TheGame.Core.Game.Services.Interface;

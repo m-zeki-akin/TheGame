@@ -1,5 +1,7 @@
 using Microsoft.AspNetCore.SignalR;
 using TheGame.Core.Game.Entities;
+using TheGame.Core.Game.Entities.Empires;
+using TheGame.Core.Game.Entities.Fleets;
 using TheGame.Core.Game.Shared.ValueObjects;
 
 namespace TheGame.Core.Game.Hubs;

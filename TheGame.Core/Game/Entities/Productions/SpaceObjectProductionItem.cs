@@ -1,6 +1,6 @@
 ﻿using TheGame.Core.Game.Entities.SpaceObjects;
 
-namespace TheGame.Core.Game.Entities.Buildings.Buildings;
+namespace TheGame.Core.Game.Entities.Productions;
 
 public class SpaceObjectProductionItem
 {

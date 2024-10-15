@@ -1,4 +1,5 @@
 ﻿using Serilog;
+using TheGame.Core.Game.Shared.Enums;
 
 namespace TheGame.Core.Game.Shared.ValueObjects;
 
@@ -27,42 +28,42 @@ public class ResourceValue
         return x;
     }
 
-    public static (ResourceValue, HashSet<string>) operator -(ResourceValue x, ResourceValue y)
+    public static (ResourceValue, HashSet<Tuple<string, long>>) operator -(ResourceValue x, ResourceValue y)
     {
         // List to register resources that become negative
-        var negativeResources = new HashSet<string>();
+        var negativeResources = new HashSet<Tuple<string, long>>();
 
         x.Energy -= y.Energy;
         if (x.Energy < 0)
-            negativeResources.Add("Energy");
+            negativeResources.Add(Tuple.Create(nameof(ResourceType.Energy), x.Energy));
 
         x.Fuel -= y.Fuel;
         if (x.Fuel < 0)
-            negativeResources.Add("Fuel");
+            negativeResources.Add(Tuple.Create(nameof(ResourceType.Fuel), x.Fuel));
 
         x.Material -= y.Material;
         if (x.Material < 0)
-            negativeResources.Add("Material");
-
+            negativeResources.Add(Tuple.Create(nameof(ResourceType.Material), x.Material));
+        
         x.Alloy -= y.Alloy;
         if (x.Alloy < 0)
-            negativeResources.Add("Alloy");
+            negativeResources.Add(Tuple.Create(nameof(ResourceType.Alloy), x.Alloy));
 
         x.Polonium -= y.Polonium;
         if (x.Polonium < 0)
-            negativeResources.Add("Polonium");
+            negativeResources.Add(Tuple.Create(nameof(ResourceType.Polonium), x.Polonium));
         
         x.Technetium -= y.Technetium;
         if (x.Technetium < 0)
-            negativeResources.Add("Technetium");
+            negativeResources.Add(Tuple.Create(nameof(ResourceType.Technetium), x.Technetium));
 
         x.Actinium -= y.Actinium;
         if (x.Actinium < 0)
-            negativeResources.Add("Actinium");
+            negativeResources.Add(Tuple.Create(nameof(ResourceType.Actinium), x.Actinium));
 
         x.Plutonium -= y.Plutonium;
         if (x.Plutonium < 0)
-            negativeResources.Add("Plutonium");
+            negativeResources.Add(Tuple.Create(nameof(ResourceType.Plutonium), x.Plutonium));
 
         return (x, negativeResources);
     }
@@ -91,6 +92,20 @@ public class ResourceValue
         x.Technetium = (long)(x.Technetium * y);
         x.Actinium = (long)(x.Actinium * y);
         x.Plutonium = (long)(x.Plutonium * y);
+
+        return x;
+    }
+    
+    public static ResourceValue operator /(ResourceValue x, double y)
+    {
+        x.Energy = (long)(x.Energy / y);
+        x.Fuel = (long)(x.Fuel / y);
+        x.Material = (long)(x.Material / y);
+        x.Alloy = (long)(x.Alloy / y);
+        x.Polonium = (long)(x.Polonium / y);
+        x.Technetium = (long)(x.Technetium / y);
+        x.Actinium = (long)(x.Actinium / y);
+        x.Plutonium = (long)(x.Plutonium / y);
 
         return x;
     }

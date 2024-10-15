@@ -2,5 +2,8 @@
 
 public class ResearchBuilding : Building
 {
-    public int WorkRate;
+    public int EconomicsResearchRate;
+    public int GeneticsResearchRate;
+    public int WarfareResearchRate;
+    public int RoboticsResearchRate;
 }

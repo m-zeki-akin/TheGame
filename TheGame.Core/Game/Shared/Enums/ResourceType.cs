@@ -3,9 +3,9 @@ namespace TheGame.Core.Game.Shared.Enums;
 public enum ResourceType
 {
     Fuel,
-    Materials,
+    Material,
     Energy,
-    Alloys,
+    Alloy,
     Polonium,
     Technetium,
     Actinium,

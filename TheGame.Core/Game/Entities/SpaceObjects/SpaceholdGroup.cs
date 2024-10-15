@@ -1,3 +1,5 @@
+using TheGame.Core.Game.Entities.StellarObjects;
+
 namespace TheGame.Core.Game.Entities.SpaceObjects;
 
 public class SpaceholdGroup

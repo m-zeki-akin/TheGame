@@ -1,4 +1,6 @@
-namespace TheGame.Core.Game.Entities;
+using TheGame.Core.Game.Entities.Fleets;
+
+namespace TheGame.Core.Game.Entities.Empires;
 
 public class EmpireFleet
 {

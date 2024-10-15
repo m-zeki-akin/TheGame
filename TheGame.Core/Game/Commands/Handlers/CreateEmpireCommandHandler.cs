@@ -2,6 +2,8 @@ using MediatR;
 using TheGame.Core.Game.Cache;
 using TheGame.Core.Game.Data;
 using TheGame.Core.Game.Entities;
+using TheGame.Core.Game.Entities.Empires;
+using TheGame.Core.Game.Entities.StellarObjects;
 using TheGame.Core.Game.Shared.Enums;
 
 namespace TheGame.Core.Game.Commands.Handlers;
@@ -23,11 +25,14 @@ public class CreateEmpireCommandHandler(
             Factions = new HashSet<EmpireFaction>(),
             Fleets = new HashSet<EmpireFleet>(),
             Planets = new HashSet<EmpirePlanet>(),
-            Researches = new HashSet<EmpireResearch>(),
+            RoboticsResearch = new EmpireResearch(),
+            EconomicsResearch = new EmpireResearch(),
+            GeneticsResearch = new EmpireResearch(),
+            WarfareResearch = new EmpireResearch(),
             Type = request.EmpireType,
             Leader = request.Player,
             CreatedAt = DateTime.UtcNow,
-            TradePartners = new HashSet<TradePartner>(),
+            TradePartners = new HashSet<EmpireTrade>(),
         };
         
         // TODO: Find planet from known galaxy and add capital planet to new player

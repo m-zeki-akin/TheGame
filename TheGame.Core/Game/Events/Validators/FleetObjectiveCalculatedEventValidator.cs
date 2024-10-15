@@ -1,5 +1,6 @@
 ﻿using TheGame.Core.Game.Commands;
 using TheGame.Core.Game.Entities;
+using TheGame.Core.Game.Entities.Fleets;
 using TheGame.Core.Game.Events.Validators.Interfaces;
 using TheGame.Core.Game.Shared;
 using TheGame.Core.Game.Shared.ValueObjects;
@@ -23,7 +24,7 @@ public class FleetObjectiveCalculatedEventValidator : IFleetObjectiveCalculatedE
                 throw new KeyNotFoundException($"Spacecraft group {spacecraftGroup.Id} not found");
             }
 
-            if (result.FuelConsumption.Total() > spacecraftGroup.Spacecraft.Attributes.FuelCapacity)
+            if (result.FuelConsumption.Total() > spacecraftGroup.Spacecraft.StorageComponent.Capacity)
             {
                 var missingFuel = result.FuelConsumption.Total() - spacecraftGroup.Spacecraft.StorageComponent.Capacity;
                 validationResult.AddError(
@@ -32,31 +33,33 @@ public class FleetObjectiveCalculatedEventValidator : IFleetObjectiveCalculatedE
                     missingFuel
                 );
             }
+        }
 
-            if (result.DepartTime > GameRules.FleetPlanetDepartingTimeMax)
-            {
-                validationResult.AddError(
-                    $"Spacecraft: {spacecraftGroup.Spacecraft.Name} planet depart time limit exceeded.",
-                    "DepartTime",
-                    result.DepartTime
-                );
-            }
+        var commonResult = calculationResults.First();
+        
+        if (commonResult.DepartTime > GameRules.FleetPlanetDepartingTimeMax)
+        {
+            validationResult.AddError(
+                $"Fleets: {fleet.Name} planet depart time limit exceeded.",
+                "DepartTime",
+                commonResult.DepartTime
+            );
+        }
 
-            if (result.TravelTime > GameRules.FleetTravelTimeMax)
-            {
-                validationResult.AddError(
-                    $"Spacecraft: {spacecraftGroup.Spacecraft.Name} travel time limit exceeded.",
-                    "TravelTime",
-                    result.TravelTime
-                );
-            }
+        if (commonResult.TravelTime > GameRules.FleetTravelTimeMax)
+        {
+            validationResult.AddError(
+                $"Fleets: {fleet.Name} travel time limit exceeded.",
+                "TravelTime",
+                commonResult.TravelTime
+            );
         }
 
         if (fleet.Planet!.StoredResources < cost)
         {
             var missingResources = cost - fleet.Planet!.StoredResources;
             validationResult.AddError(
-                $"Objective costs {cost} resources. Need {missingResources} more resources.",
+                $"Objective costs {cost} resources. Need more of those resources:{missingResources.Item2} values: {missingResources.Item1}.",
                 "Resources",
                 missingResources
             );

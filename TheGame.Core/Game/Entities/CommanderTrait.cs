@@ -1,6 +1,6 @@
 namespace TheGame.Core.Game.Entities;
 
-public class CommanderTrait
+public class CommanderTrait : DynamicEntity
 {
     public Guid CommanderId { get; set; }
     public Commander Commander { get; set; }

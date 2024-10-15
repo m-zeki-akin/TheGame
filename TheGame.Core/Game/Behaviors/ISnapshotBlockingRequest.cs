@@ -1,4 +1,4 @@
-﻿namespace TheGame.Core.Game;
+﻿namespace TheGame.Core.Game.Behaviors;
 
 public interface ISnapshotBlockingRequest
 {

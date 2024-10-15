@@ -1,6 +1,8 @@
 ﻿using MediatR;
 using TheGame.Core.Game.Cache;
+using TheGame.Core.Game.Cache.Interfaces;
 using TheGame.Core.Game.Entities;
+using TheGame.Core.Game.Entities.Fleets;
 using TheGame.Core.Game.Entities.SpaceObjects;
 using TheGame.Core.Game.Events.Validators.Interfaces;
 using TheGame.Core.Game.Services.Interface;
@@ -16,14 +18,14 @@ public class FleetObjectiveSetCommandHandler(
     IFleetObjectiveCalculatedEventValidator validator)
     : IRequestHandler<FleetObjectiveSetCommand, Result<FleetObjective>>
 {
-    public Task<Result<FleetObjective>> Handle(FleetObjectiveSetCommand notification,
+    public async Task<Result<FleetObjective>> Handle(FleetObjectiveSetCommand notification,
         CancellationToken cancellationToken)
     {
         var fleet = fleetCache.Get(notification.FleetId);
 
         if (fleet == null)
         {
-            throw new KeyNotFoundException($"Fleet with id {notification.FleetId} not found");
+            throw new KeyNotFoundException($"Fleets with id {notification.FleetId} not found");
         }
 
         var isDifferentSolarSystem = notification.StartLocation.Location.SolarSystem.Id !=
@@ -39,7 +41,7 @@ public class FleetObjectiveSetCommandHandler(
         var totalCost = fleetObjectiveCalculationService.CalculateTotalCost(results);
 
         var validation = validator.Validate(fleet, totalCost, results);
-        if (validation.IsFailed) return Task.FromResult(Result<FleetObjective>.Failure(validation));
+        if (validation.IsFailed) return await Task.FromResult(Result<FleetObjective>.Failure(validation));
 
         var fleetObjective = new FleetObjective
         {
@@ -52,7 +54,7 @@ public class FleetObjectiveSetCommandHandler(
             Duration = results.First().TravelTime
         };
 
-        return Task.FromResult(Result<FleetObjective>.Success(fleetObjective));
+        return await Task.FromResult(Result<FleetObjective>.Success(fleetObjective));
     }
     
     private HashSet<ObjectiveCalculationResult> CalculateForAllSpacecraftGroupsCorrelated(

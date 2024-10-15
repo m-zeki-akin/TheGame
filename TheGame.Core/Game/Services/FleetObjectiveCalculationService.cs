@@ -1,5 +1,6 @@
 ﻿using TheGame.Core.Game.Entities;
 using TheGame.Core.Game.Entities.SpaceObjects;
+using TheGame.Core.Game.Entities.StellarObjects;
 using TheGame.Core.Game.Services.Interface;
 using TheGame.Core.Game.Shared;
 using TheGame.Core.Game.Shared.ValueObjects;
@@ -46,7 +47,7 @@ public class FleetObjectiveCalculationService : IFleetObjectiveCalculationServic
 
     public int CalculatePowerRate(int powerUsagePercentage, Spacecraft spacecraft)
     {
-        return spacecraft.EngineComponent.PowerRate * powerUsagePercentage / 100;
+        return spacecraft.PowerGeneratorComponent.Value * powerUsagePercentage / 100;
     }
 
     public int CalculateJumpPower(int powerUsagePercentage, Spacecraft spacecraft)
@@ -57,7 +58,7 @@ public class FleetObjectiveCalculationService : IFleetObjectiveCalculationServic
     public ResourceValue CalculateConsumptionRate(int powerUsagePercentage, Spacecraft spacecraft,
         bool differentSolarSystem)
     {
-        return spacecraft.EngineComponent.ConsumptionRate *
+        return spacecraft.EngineComponent.ConsumptionRate /
                powerUsagePercentage *
                powerUsagePercentage *
                (differentSolarSystem

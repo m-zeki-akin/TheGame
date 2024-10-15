@@ -1,11 +1,10 @@
 ﻿using MediatR;
-using TheGame.Core.Game.Entities.SpaceObjects;
 
-namespace TheGame.Core.Game.Events;
+namespace TheGame.Core.Game.Events.Handler;
 
-public class ProductionCompletedEventHandler : INotificationHandler<ProductionCompletedEvent>
+public class ProductionCompletedEventHandler : INotificationHandler<SpaceObjectProductionCompletedEvent>
 {
-    public Task Handle(ProductionCompletedEvent notification, CancellationToken cancellationToken)
+    public Task Handle(SpaceObjectProductionCompletedEvent notification, CancellationToken cancellationToken)
     {
         throw new NotImplementedException();
     }

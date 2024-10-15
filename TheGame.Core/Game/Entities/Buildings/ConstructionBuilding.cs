@@ -1,4 +1,4 @@
-﻿using TheGame.Core.Game.Entities.Buildings.Buildings;
+﻿using TheGame.Core.Game.Entities.Productions;
 
 namespace TheGame.Core.Game.Entities.Buildings;
 

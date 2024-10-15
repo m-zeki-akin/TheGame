@@ -1,3 +1,5 @@
+using TheGame.Core.Game.Entities.Fleets;
+
 namespace TheGame.Core.Game.Entities.SpaceObjects;
 
 public class SpacecraftGroup

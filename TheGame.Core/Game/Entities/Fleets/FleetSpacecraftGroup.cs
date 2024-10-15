@@ -1,6 +1,6 @@
 using TheGame.Core.Game.Entities.SpaceObjects;
 
-namespace TheGame.Core.Game.Entities;
+namespace TheGame.Core.Game.Entities.Fleets;
 
 public class FleetSpacecraftGroup
 {

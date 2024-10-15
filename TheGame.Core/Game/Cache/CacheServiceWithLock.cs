@@ -1,5 +1,6 @@
 ﻿using System.Collections.Concurrent;
 using EFCore.BulkExtensions;
+using TheGame.Core.Game.Cache.Interfaces;
 using TheGame.Core.Game.Data;
 
 namespace TheGame.Core.Game.Cache;

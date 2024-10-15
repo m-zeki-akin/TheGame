@@ -1,8 +1,10 @@
+using TheGame.Core.Game.Entities.Empires;
 using TheGame.Core.Game.Entities.SpaceObjects;
+using TheGame.Core.Game.Entities.StellarObjects;
 using TheGame.Core.Game.Shared.Enums;
 using TheGame.Core.Game.Shared.ValueObjects;
 
-namespace TheGame.Core.Game.Entities;
+namespace TheGame.Core.Game.Entities.Fleets;
 
 public class Fleet
 {
@@ -10,13 +12,7 @@ public class Fleet
     public string Name { get; set; }
     public FleetType Type { get; set; }
     public FleetState State { get; set; }
-    public int DetectionRange { get; set; }
-    public int DetectionPower { get; set; }
-    public int Morale { get; set; }
-    public int Speed { get; set; }
-    public int JumpPower { get; set; }
     public ResourceValue Stock { get; set; }
-    public ResourceValue MovementResourceCost { get; set; }
     public Location Location { get; set; }
 
     public Guid? CommanderId { get; set; }

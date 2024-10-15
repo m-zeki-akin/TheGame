@@ -3,6 +3,7 @@ using Microsoft.Extensions.Hosting;
 using Serilog;
 using TheGame.Core.Game.Cache;
 using TheGame.Core.Game.Data;
+using TheGame.Core.Game.Services.Interface;
 
 namespace TheGame.Core.Game.Services;
 
@@ -15,13 +16,11 @@ public class SnapshotService(MainDataContext dbContext) : ISnapshotService
         await SnapshotLock.WaitAsync();
         try
         {
-            var tasks = new HashSet<Task>(CacheServiceRegistry.CacheServices.Count);
-            foreach (var cacheService in CacheServiceRegistry.CacheServices)
+            await Parallel.ForEachAsync(CacheServiceRegistry.CacheServices, async (cacheService, f) =>
             {
-                tasks.Add(Task.Run(() => cacheService.SaveSnapshotAsync(dbContext)));
-            }
-
-            await Task.WhenAll(tasks);
+                await cacheService.SaveSnapshotAsync(dbContext);
+                Log.Information("Saved snapshot to {CacheService}", cacheService.GetType().Name);
+            });
         }
         finally
         {

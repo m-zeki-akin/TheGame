@@ -17,19 +17,10 @@ public class Spacecraft : SpaceObject
     public ArmourComponent ArmourComponent { get; set; }
     public Guid ShieldComponentId { get; set; }
     public ShieldComponent ShieldComponent { get; set; }
-    public int WeaponsComponentSlot { get; set; }
-    public ICollection<WeaponComponent> WeaponsComponent { get; set; }
-
     public Guid EngineId { get; set; }
     public EngineComponent EngineComponent { get; set; }
     public Guid StorageId { get; set; }
     public StorageComponent StorageComponent { get; set; }
-
-    public int Mass { get; set; }
-    public int DisengageChance { get; set; }
-    public int ScreenPower { get; set; }
-    public int CommandPower { get; set; }
-    public int DetectionRange { get; set; }
-    public int DetectionPower { get; set; }
-    public ResourceValue FuelStorage { get; set; } // Should be stack with components
+    public int WeaponsComponentSlot { get; set; }
+    public ICollection<WeaponComponent> WeaponsComponent { get; set; }
 }

@@ -17,4 +17,5 @@ public class GameRules
     public static readonly long FleetTravelTimeMax = 1296000; // 15 days
     public static readonly double FleetFuelConsumptionNormalizerCoefficient = 1.0; // 15 days
     public static readonly double FleetTravelTimeNormalizerCoefficient = 1.0; // 15 days
+    public static readonly double PlanetWorkforceBuildingProductionCoefficient = 4.0; // 15 days
 }

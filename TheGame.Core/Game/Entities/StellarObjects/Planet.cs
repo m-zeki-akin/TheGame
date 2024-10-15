@@ -1,11 +1,13 @@
 using System.ComponentModel;
 using TheGame.Core.Game.Entities.Buildings;
-using TheGame.Core.Game.Entities.Buildings.Buildings;
+using TheGame.Core.Game.Entities.Empires;
+using TheGame.Core.Game.Entities.Productions;
 using TheGame.Core.Game.Entities.SpaceObjects;
+using TheGame.Core.Game.Shared;
 using TheGame.Core.Game.Shared.Enums;
 using TheGame.Core.Game.Shared.ValueObjects;
 
-namespace TheGame.Core.Game.Entities;
+namespace TheGame.Core.Game.Entities.StellarObjects;
 
 public class Planet : StellarObject
 {
@@ -13,6 +15,7 @@ public class Planet : StellarObject
     public bool IsActive { get; set; }
     public bool IsUnderAttack { get; set; }
     public int Devastation { get; set; }
+    public int Development { get; set; }
     public Climate Climate { get; set; }
     public bool IsCapital { get; set; }
     public StrategicResourceType? StrategicResourceType { get; set; }
@@ -23,6 +26,8 @@ public class Planet : StellarObject
 
     public Guid? OwnerId { get; set; }
     public Empire? Owner { get; set; }
+    public bool IsOccupied { get; set; }
+    public Empire? Occupier { get; set; }
 
     public Guid? SpaceholdGroupId { get; set; }
     public SpaceholdGroup? SpaceholdGroup { get; set; }
@@ -33,8 +38,10 @@ public class Planet : StellarObject
     public int ExtractionField { get; set; }
     
     // buildings
-    public Guid? ConstructionBuildingId { get; set; }
-    public ConstructionBuilding ConstructionBuilding { get; set; }
-    public ICollection<PlanetBuilding> Buildings { get; set; }
-    public ICollection<Component> Inventory { get; set; }
+    public Workforce Workforce { get; set; }
+    public ICollection<BuildingProductionItem> BuildingProductions { get; set; }
+    public ICollection<FactoryBuilding> FactoryBuildings { get; set; }
+    public ICollection<ResourceBuilding> ResourceBuildings { get; set; }
+    public ICollection<ResearchBuilding> ResearchBuildings { get; set; }
+    public ICollection<Component> Components { get; set; }
 }

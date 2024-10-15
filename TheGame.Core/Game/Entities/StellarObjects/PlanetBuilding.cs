@@ -1,6 +1,6 @@
 ﻿using TheGame.Core.Game.Entities.Buildings;
 
-namespace TheGame.Core.Game.Entities;
+namespace TheGame.Core.Game.Entities.StellarObjects;
 
 public class PlanetBuilding
 {

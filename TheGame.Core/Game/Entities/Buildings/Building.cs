@@ -21,4 +21,5 @@ public abstract class Building : StaticEntity
 
     public int? ResourceConsumptionsId { get; set; }
     public ResourceCost? ResourceConsumptionsRate { get; set; }
+    
 }

@@ -6,10 +6,14 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Serilog;
 using TheGame.Core.Game;
+using TheGame.Core.Game.Behaviors;
 using TheGame.Core.Game.Cache;
+using TheGame.Core.Game.Cache.Interfaces;
 using TheGame.Core.Game.Data;
 using TheGame.Core.Game.Entities;
-using TheGame.Core.Game.Entities.Buildings.Buildings;
+using TheGame.Core.Game.Entities.Fleets;
+using TheGame.Core.Game.Entities.Productions;
+using TheGame.Core.Game.Entities.StellarObjects;
 using TheGame.Core.Game.Events.Validators;
 using TheGame.Core.Game.Events.Validators.Interfaces;
 using TheGame.Core.Game.Hosts;
@@ -47,9 +51,9 @@ sc.AddTransient<IFleetObjectiveCalculatedEventValidator, FleetObjectiveCalculate
 
 //Services
 sc.AddScoped<ISnapshotService, SnapshotService>();
-sc.AddScoped<IPlanetUpdateService, PlanetUpdateService>();
-sc.AddScoped<IFleetUpdateService, FleetUpdateService>();
-sc.AddScoped<IPlayerUpdateService, PlayerUpdateService>();
+sc.AddScoped<IPlanetProcessService, PlanetProcessService>();
+sc.AddScoped<IFleetProcessService, FleetProcessService>();
+sc.AddScoped<IPlayerProcessService, PlayerProcessService>();
 sc.AddScoped<IFleetObjectiveCalculationService, FleetObjectiveCalculationService>();
 
 //Background Services

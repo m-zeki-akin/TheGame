@@ -1,6 +1,6 @@
 ﻿using TheGame.Core.Game.Data;
 
-namespace TheGame.Core.Game.Cache;
+namespace TheGame.Core.Game.Cache.Interfaces;
 
 public interface ICacheServiceWithLock<T>
 {

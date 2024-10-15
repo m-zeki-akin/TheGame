@@ -1,7 +1,7 @@
 ﻿using MediatR;
 using TheGame.Core.Game.Services;
 
-namespace TheGame.Core.Game;
+namespace TheGame.Core.Game.Behaviors;
 
 
 public class SnapshotBlockingBehavior<TRequest, TResponse>(SnapshotService snapshotService)

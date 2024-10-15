@@ -1,8 +1,9 @@
+using TheGame.Core.Game.Entities.Empires;
+
 namespace TheGame.Core.Game.Entities;
 
-public class Alliance
+public class Alliance : DynamicEntity
 {
-    public Guid Id { get; set; }
     public string Name { get; set; }
 
     public ICollection<Empire> Players { get; set; }

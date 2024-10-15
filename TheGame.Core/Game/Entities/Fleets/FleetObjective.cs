@@ -1,7 +1,7 @@
 ﻿using TheGame.Core.Game.Shared.Enums;
 using TheGame.Core.Game.Shared.ValueObjects;
 
-namespace TheGame.Core.Game.Entities;
+namespace TheGame.Core.Game.Entities.Fleets;
 
 public class FleetObjective
 {

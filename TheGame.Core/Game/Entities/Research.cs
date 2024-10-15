@@ -10,5 +10,6 @@ public class Research : StaticEntity
     public int Level { get; set; }
     public ResearchType Type { get; set; }
     public Guid CostId { get; set; }
-    public ResourceCost Cost { get; set; }
+    public ResourceCost ResourceCost { get; set; }
+    public int ResearchCost { get; set; }
 }

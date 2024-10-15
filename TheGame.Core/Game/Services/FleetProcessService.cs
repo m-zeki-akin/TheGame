@@ -1,28 +1,23 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
-using TheGame.Core.Game.Cache;
-using TheGame.Core.Game.Data;
-using TheGame.Core.Game.Entities;
+﻿using TheGame.Core.Game.Cache.Interfaces;
+using TheGame.Core.Game.Entities.Fleets;
 using TheGame.Core.Game.Services.Interface;
 using TheGame.Core.Game.Shared.Enums;
-using TheGame.Core.Game.Shared.ValueObjects;
 
 namespace TheGame.Core.Game.Services;
 
-public class FleetUpdateService(ICacheService<Fleet> fleetCache) 
-    : IFleetUpdateService
+public class FleetProcessService(ICacheService<Fleet> fleetCache)
+    : IFleetProcessService
 {
-
-    public async Task UpdateAsync(CancellationToken cancellationToken)
+    public Task Process()
     {
         var fleets = fleetCache.GetAll();
-        
+
         foreach (var fleet in fleets)
         {
             switch (fleet.State)
             {
                 case FleetState.Navigating:
-                    await UpdateNavigatingFleetAsync(fleet, cancellationToken);
+                    ProcessNavigatingFleet(fleet);
                     break;
                 case FleetState.SpaceJumping:
                     // Space jumping logic can be handled here
@@ -31,9 +26,10 @@ public class FleetUpdateService(ICacheService<Fleet> fleetCache)
             }
         }
 
+        return Task.CompletedTask;
     }
 
-    private async Task UpdateNavigatingFleetAsync(Fleet fleet, CancellationToken cancellationToken)
+    private void ProcessNavigatingFleet(Fleet fleet)
     {
         var fleetObjective = fleet.FleetMission.FirstOrDefault();
     }
